@@ -83,7 +83,30 @@ func (uc *GamesUseCases) UpdateGameData(id int64, g *dto.UpdateGame) (*dto.Game,
 		return nil, &exceptions.ExcDatabaseError
 	}
 
-	updatedUser, _ := uc.GetGameById(id)
+	updatedGame, _ := uc.GetGameById(id)
 
-	return updatedUser, nil
+	return updatedGame, nil
+}
+
+func (uc *GamesUseCases) UpdateScore(id int64, teamScoredID int64, increment uint) (*dto.Game, *exceptions.Exception) {
+	game, exc := uc.GetGameById(id)
+	if exc != nil {
+		return nil, exc
+	}
+
+	data := dto.UpdateGame{}
+
+	if game.TeamOneID == teamScoredID {
+		data.TeamOneScore = game.TeamOneScore + increment
+	} else {
+		data.TeamTwoScore = game.TeamTwoScore + increment
+	}
+
+	err := uc.r.Update(id, data)
+	if err != nil {
+		return nil, &exceptions.ExcDatabaseError
+	}
+
+	updatedGame, _ := uc.GetGameById(id)
+	return updatedGame, nil
 }

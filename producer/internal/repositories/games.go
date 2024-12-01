@@ -73,7 +73,7 @@ func (r *GamesRepository) Update(id int64, g dto.UpdateGame) error {
 	json.Unmarshal(inrec, &uMap)
 
 	var rec goqu.Record = uMap
-	query, _, _ := goqu.From("games").Where(goqu.C("id").Eq(id)).Update().Set(
+	query, _, _ := dialect.From("games").Where(goqu.C("id").Eq(id)).Update().Set(
 		rec,
 	).ToSQL()
 

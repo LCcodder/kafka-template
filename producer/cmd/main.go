@@ -42,7 +42,7 @@ func diContainer(db *sql.DB, r *chi.Mux, p *sarama.SyncProducer) {
 	teamsUseCases := teams_usecases.NewTeamsUseCases(teamsRepository)
 	gamesUseCases := games_usecases.NewGamesUseCases(gamesRepository, teamsUseCases)
 	playersUseCases := players_usecases.NewPlayersUseCases(playersRepository, teamsUseCases)
-	eventsUseCases := events_usecases.NewEventUseCases(p, playersUseCases, teamsUseCases)
+	eventsUseCases := events_usecases.NewEventUseCases(p, playersUseCases, teamsUseCases, gamesUseCases)
 
 	controllers.NewPlayersController(r, playersUseCases).Setup()
 	controllers.NewTeamsController(r, teamsUseCases).Setup()

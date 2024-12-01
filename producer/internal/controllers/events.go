@@ -33,7 +33,7 @@ func (c *EventsController) publishScoreHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	exc := c.euc.PublishScore(score)
+	publishedScore, exc := c.euc.PublishScore(score)
 	if exc != nil {
 		w.WriteHeader(int(exc.StatusCode))
 		w.Write(*utils.ParseResponse(exc))
@@ -41,17 +41,7 @@ func (c *EventsController) publishScoreHandler(w http.ResponseWriter, r *http.Re
 	}
 
 	w.WriteHeader(201)
-	w.Write(*utils.ParseResponse(map[string]bool{
-		"success": true,
-	}))
-}
-
-func (c *EventsController) GetEventByIDHandler(w http.ResponseWriter, r *http.Request) {
-
-}
-
-func (c *EventsController) GetEventsByTopicHandler(w http.ResponseWriter, r *http.Request) {
-
+	w.Write(*utils.ParseResponse(publishedScore))
 }
 
 func (c *EventsController) Setup() {

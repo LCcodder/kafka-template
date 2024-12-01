@@ -1,10 +1,7 @@
 package dto
 
 type Score struct {
-	ID string `json:"id" validate:"omitempty"`
-
-	// autoset
-	TeamID int64 `json:"team_id" validate:"omitempty"`
+	GameID int `json:"game_id" validate:"required"`
 
 	PlayerID int  `json:"player_id" validate:"required"`
 	Points   uint `json:"points" validate:"required,min=1,max=3"`
@@ -13,29 +10,63 @@ type Score struct {
 	Time    string `json:"time" validate:"required"`
 }
 
-type Foul struct {
+type ScoreToPublish struct {
 	ID string `json:"id"`
+
+	Game         Game   `json:"game"`
+	PlayerScored Player `json:"player_scored"`
+	TeamScored   Team   `json:"team_scored"`
+	Points       uint   `json:"points"`
+
+	Quarter uint   `json:"quarter"`
+	Time    string `json:"time"`
+}
+
+type Foul struct {
+	GameID int `json:"game_id" validate:"required"`
 
 	Type       string `json:"type" validate:"required,min=1,max=16"`
 	OnPlayerID int    `json:"on_player_id" validate:"required"`
 	ByPlayerID int    `json:"from_player_id" validate:"required"`
 
-	// autoset
-	ByTeamID int `json:"by_team_id"`
+	Quarter uint   `json:"quarter" validate:"required,min=1,max=6"`
+	Time    string `json:"time" validate:"required"`
+}
+
+type FoulToPublish struct {
+	ID string `json:"id"`
+
+	Game Game   `json:"game"`
+	Type string `json:"type"`
+
+	OnPlayer Player `json:"on_player"`
+	ByPlayer Player `json:"by_player"`
+	ByTeam   Team   `json:"by_team"`
+
+	Quarter uint   `json:"quarter"`
+	Time    string `json:"time"`
+}
+
+type Substitution struct {
+	GameID int `json:"game_id" validate:"required"`
+
+	WhomPlayerID int `json:"whom_player_id" validate:"required"`
+	ToPlayerID   int `json:"to_player_id" validate:"required"`
 
 	Quarter uint   `json:"quarter" validate:"required,min=1,max=6"`
 	Time    string `json:"time" validate:"required"`
 }
 
-type Substitution struct {
+type SubstitutionToPublish struct {
 	ID string `json:"id"`
 
-	WhomPlayerID int `json:"whom_player_id" validate:"required"`
-	ToPlayerID   int `json:"to_player_id" validate:"required"`
+	Game Game `json:"game"`
 
-	// autoset
-	TeamID int64 `json:"in_team"`
+	WhomPlayer Player `json:"whom_player"`
+	ToPlayerD  Player `json:"to_player"`
 
-	Quarter uint   `json:"quarter" validate:"required,min=1,max=6"`
-	Time    string `json:"time" validate:"required"`
+	InTeam Team `json:"in_team"`
+
+	Quarter uint   `json:"quarter"`
+	Time    string `json:"time"`
 }
