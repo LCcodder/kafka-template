@@ -1,8 +1,6 @@
 package events_usecases
 
 import (
-	"encoding/json"
-
 	"example.com/m/v2/internal/shared/dto"
 	"example.com/m/v2/internal/shared/exceptions"
 	games_usecases "example.com/m/v2/internal/usecases/games"
@@ -31,35 +29,6 @@ func NewEventUseCases(p *sarama.SyncProducer,
 	}
 }
 
-func createProducerMessage[T any](topic string, eventID string, value *T) (*sarama.ProducerMessage, error) {
-	valueBytes, err := json.Marshal(*value)
-	if err != nil {
-		return nil, err
-	}
-
-	msg := &sarama.ProducerMessage{
-		Topic: topic,
-		Key:   sarama.StringEncoder(eventID),
-		Value: sarama.ByteEncoder(valueBytes),
-	}
-	return msg, nil
-}
-
-func teamIsInGame(teamID int64, game dto.Game) bool {
-	return game.TeamOneID == teamID || game.TeamTwoID == teamID
-}
-
-func validateScoring(game dto.Game, player dto.Player) *exceptions.Exception {
-	if game.IsEnded {
-		return &exceptions.ExcGameIsEnded
-	}
-
-	if !teamIsInGame(player.TeamID, game) {
-		return &exceptions.ExcTeamNotFound
-	}
-	return nil
-}
-
 func (uc *EventUseCases) PublishScore(s *dto.Score) (*dto.ScoreToPublish, *exceptions.Exception) {
 	game, exc := uc.guc.GetGameById(int64(s.GameID))
 	if exc != nil {
@@ -74,7 +43,7 @@ func (uc *EventUseCases) PublishScore(s *dto.Score) (*dto.ScoreToPublish, *excep
 		return nil, exc
 	}
 
-	if exc = validateScoring(*game, *playerScored); exc != nil {
+	if exc = validateAction(*game, *playerScored); exc != nil {
 		return nil, exc
 	}
 
@@ -83,8 +52,8 @@ func (uc *EventUseCases) PublishScore(s *dto.Score) (*dto.ScoreToPublish, *excep
 		Game:         *game,
 		TeamScored:   *teamScored,
 		PlayerScored: *playerScored,
-		Quarter:      s.Quarter,
 		Points:       s.Points,
+		Quarter:      s.Quarter,
 		Time:         s.Time,
 	}
 
@@ -94,13 +63,128 @@ func (uc *EventUseCases) PublishScore(s *dto.Score) (*dto.ScoreToPublish, *excep
 
 	msg, err := createProducerMessage("Score", scoreToPublish.ID, &scoreToPublish)
 	if err != nil {
-		return nil, &exceptions.ExcFailedToParseMessage
+		return nil, &exceptions.ExcServiceUnavailable
 	}
 
 	_, _, err = uc.p.SendMessage(msg)
 	if err != nil {
-		return nil, &exceptions.ExcFailedToSendMessage
+		return nil, &exceptions.ExcServiceUnavailable
 	}
 
 	return &scoreToPublish, nil
+}
+
+func (uc *EventUseCases) PublishFoul(f *dto.Foul) (*dto.FoulToPublish, *exceptions.Exception) {
+	game, exc := uc.guc.GetGameById(int64(f.GameID))
+	if exc != nil {
+		return nil, exc
+	}
+
+	playerFouled, exc := uc.puc.GetPlayerById(int64(f.ByPlayerID))
+	if exc != nil {
+		return nil, exc
+	}
+
+	playerWhichWasFouled, exc := uc.puc.GetPlayerById(int64(f.OnPlayerID))
+	if exc != nil {
+		return nil, exc
+	}
+
+	teamFouled, exc := uc.tuc.GetTeamById(playerFouled.TeamID)
+	if exc != nil {
+		return nil, exc
+	}
+
+	if playersAreFromSameTeam(*playerFouled, *playerWhichWasFouled) {
+		return nil, &exceptions.ExcCantFoulOnPlayerFromSameTeam
+	}
+
+	// validating first player action, then next one
+	if exc = validateAction(*game, *playerFouled); exc != nil {
+		return nil, exc
+	}
+	if exc = validateAction(*game, *playerWhichWasFouled); exc != nil {
+		return nil, exc
+	}
+
+	foulToPublish := dto.FoulToPublish{
+		ID:       uuid.New().String(),
+		Game:     *game,
+		Type:     f.Time,
+		OnPlayer: *playerWhichWasFouled,
+		ByPlayer: *playerFouled,
+		ByTeam:   *teamFouled,
+		Quarter:  f.Quarter,
+		Time:     f.Time,
+	}
+
+	msg, err := createProducerMessage("Fouls", foulToPublish.ID, &foulToPublish)
+	if err != nil {
+		return nil, &exceptions.ExcServiceUnavailable
+	}
+
+	_, _, err = uc.p.SendMessage(msg)
+	if err != nil {
+		return nil, &exceptions.ExcServiceUnavailable
+	}
+
+	return &foulToPublish, nil
+}
+
+func (uc *EventUseCases) PublishSubstitution(s *dto.Substitution) (*dto.SubstitutionToPublish, *exceptions.Exception) {
+	game, exc := uc.guc.GetGameById(int64(s.GameID))
+	if exc != nil {
+		return nil, exc
+	}
+
+	outgoingPlayer, exc := uc.puc.GetPlayerById(int64(s.WhomPlayerID))
+	if exc != nil {
+		return nil, exc
+	}
+
+	incomingPlayer, exc := uc.puc.GetPlayerById(int64(s.ToPlayerID))
+	if exc != nil {
+		return nil, exc
+	}
+
+	if !playersAreFromSameTeam(*outgoingPlayer, *incomingPlayer) {
+		return nil, &exceptions.ExcCantReplacePlayerFromAnotherTeam
+	}
+
+	team, exc := uc.tuc.GetTeamById(outgoingPlayer.TeamID)
+	if exc != nil {
+		return nil, exc
+	}
+
+	// validating first player action, then next one
+	if exc = validateAction(*game, *outgoingPlayer); exc != nil {
+		return nil, exc
+	}
+	if exc = validateAction(*game, *incomingPlayer); exc != nil {
+		return nil, exc
+	}
+
+	substitutionToPublish := dto.SubstitutionToPublish{
+		ID:   uuid.New().String(),
+		Game: *game,
+
+		WhomPlayer: *outgoingPlayer,
+		ToPlayer:   *incomingPlayer,
+		InTeam:     *team,
+
+		Quarter: s.Quarter,
+		Time:    s.Time,
+	}
+
+	msg, err := createProducerMessage("Fouls", substitutionToPublish.ID, &substitutionToPublish)
+	if err != nil {
+		return nil, &exceptions.ExcServiceUnavailable
+	}
+
+	_, _, err = uc.p.SendMessage(msg)
+	if err != nil {
+		return nil, &exceptions.ExcServiceUnavailable
+	}
+
+	return &substitutionToPublish, nil
 }

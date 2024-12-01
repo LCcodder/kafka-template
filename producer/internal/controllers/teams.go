@@ -61,6 +61,6 @@ func (c *TeamsController) getTeamById(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *TeamsController) Setup() {
-	c.r.Post("/teams", c.createTeamHandler)
-	c.r.Get("/teams/{id}", c.getTeamById)
+	c.r.Post(prefix+"/teams", c.createTeamHandler)
+	c.r.Get(prefix+"/teams/{id}", c.getTeamById)
 }

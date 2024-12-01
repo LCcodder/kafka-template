@@ -21,20 +21,6 @@ func NewGamesUseCases(r *repositories.GamesRepository, tuc *teams_usecases.Teams
 	}
 }
 
-func (uc *GamesUseCases) checkTeamsExistance(g *dto.Game) *exceptions.Exception {
-	if g.TeamOneID == g.TeamTwoID {
-		return &exceptions.ExcTeamNotFound
-	}
-	if _, exc := uc.tuc.GetTeamById(g.TeamOneID); exc != nil {
-		return exc
-	}
-	if _, exc := uc.tuc.GetTeamById(g.TeamTwoID); exc != nil {
-		return exc
-	}
-
-	return nil
-}
-
 func (uc *GamesUseCases) CreateGame(g *dto.Game) (*dto.Game, *exceptions.Exception) {
 	exc := uc.checkTeamsExistance(g)
 	if exc != nil {

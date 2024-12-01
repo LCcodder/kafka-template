@@ -1,7 +1,7 @@
 package dto
 
 type Score struct {
-	GameID int `json:"game_id" validate:"required"`
+	GameID int
 
 	PlayerID int  `json:"player_id" validate:"required"`
 	Points   uint `json:"points" validate:"required,min=1,max=3"`
@@ -23,7 +23,7 @@ type ScoreToPublish struct {
 }
 
 type Foul struct {
-	GameID int `json:"game_id" validate:"required"`
+	GameID int
 
 	Type       string `json:"type" validate:"required,min=1,max=16"`
 	OnPlayerID int    `json:"on_player_id" validate:"required"`
@@ -48,7 +48,7 @@ type FoulToPublish struct {
 }
 
 type Substitution struct {
-	GameID int `json:"game_id" validate:"required"`
+	GameID int
 
 	WhomPlayerID int `json:"whom_player_id" validate:"required"`
 	ToPlayerID   int `json:"to_player_id" validate:"required"`
@@ -63,7 +63,7 @@ type SubstitutionToPublish struct {
 	Game Game `json:"game"`
 
 	WhomPlayer Player `json:"whom_player"`
-	ToPlayerD  Player `json:"to_player"`
+	ToPlayer   Player `json:"to_player"`
 
 	InTeam Team `json:"in_team"`
 

@@ -61,6 +61,6 @@ func (c *PlayersController) getPlayerById(w http.ResponseWriter, r *http.Request
 }
 
 func (c *PlayersController) Setup() {
-	c.r.Post("/players", c.createPlayerHandler)
-	c.r.Get("/players/{id}", c.getPlayerById)
+	c.r.Post(prefix+"/players", c.createPlayerHandler)
+	c.r.Get(prefix+"/players/{id}", c.getPlayerById)
 }
