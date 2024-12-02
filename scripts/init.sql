@@ -27,3 +27,24 @@ CREATE TABLE IF NOT EXISTS games (
     FOREIGN KEY (team_one_id) REFERENCES teams(id) ON DELETE CASCADE,
     FOREIGN KEY (team_two_id) REFERENCES teams(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS users (
+    -- telegram id
+    id VARCHAR(16) primary key
+);
+
+CREATE TABLE IF NOT EXISTS users_subscriptions_games (
+    id serial primary key,
+    user_id VARCHAR(16),
+    game_id bigint unsigned,
+    FOREIGN KEY (game_id) REFERENCES games(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS users_subscriptions_teams (
+    id serial primary key,
+    user_id VARCHAR(16),
+    team_id bigint unsigned,
+    FOREIGN KEY (team_id) REFERENCES teams(id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

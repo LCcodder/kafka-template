@@ -85,3 +85,37 @@ func (r *GamesRepository) Update(id int64, g dto.UpdateGame) error {
 
 	return nil
 }
+
+func (r *GamesRepository) CloseGame(id int64) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	closeGameQuery, _, _ := dialect.From("games").Where(goqu.C("id").Eq(id)).Update().Set(
+		map[string]bool{
+			"is_ended": true,
+		},
+	).ToSQL()
+
+	_, err = tx.Exec(closeGameQuery)
+	if err != nil {
+		return err
+	}
+
+	deleteGameSubscriptionsQuery, _, _ := dialect.Delete("users_subscriptions_games").Where(goqu.Ex{
+		"game_id": id,
+	}).ToSQL()
+
+	_, err = tx.Exec(deleteGameSubscriptionsQuery)
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

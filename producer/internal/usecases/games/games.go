@@ -96,3 +96,21 @@ func (uc *GamesUseCases) UpdateScore(id int64, teamScoredID int64, increment uin
 	updatedGame, _ := uc.GetGameById(id)
 	return updatedGame, nil
 }
+
+func (uc *GamesUseCases) CloseGame(id int64) *exceptions.Exception {
+	game, exc := uc.GetGameById(id)
+	if exc != nil {
+		return exc
+	}
+
+	if game.IsEnded {
+		return &exceptions.ExcGameAlreadyClosed
+	}
+
+	err := uc.r.CloseGame(id)
+	if err != nil {
+		return &exceptions.ExcDatabaseError
+	}
+
+	return nil
+}

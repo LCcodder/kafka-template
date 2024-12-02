@@ -105,6 +105,6 @@ func (c *EventsController) publishSubstitutionHandler(w http.ResponseWriter, r *
 
 func (c *EventsController) Setup() {
 	c.r.Post(prefix+"/games/{id}/score", c.publishScoreHandler)
-	c.r.Post(prefix+"/games/{id}/foul", c.publishFoulHandler)
-	c.r.Post(prefix+"/games/{id}/substitution", c.publishSubstitutionHandler)
+	c.r.Post(prefix+"/games/{id}/fouls", c.publishFoulHandler)
+	c.r.Post(prefix+"/games/{id}/substitutions", c.publishSubstitutionHandler)
 }

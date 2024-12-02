@@ -61,7 +61,26 @@ func (c *GamesController) getGameById(w http.ResponseWriter, r *http.Request) {
 	w.Write(*utils.ParseResponse(game))
 }
 
+func (c *GamesController) closeGameHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-Type", "application/json")
+
+	id, _ := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+
+	exc := c.guc.CloseGame(id)
+	if exc != nil {
+		w.WriteHeader(int(exc.StatusCode))
+		w.Write(*utils.ParseResponse(exc))
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write(*utils.ParseResponse(map[string]bool{
+		"success": true,
+	}))
+}
+
 func (c *GamesController) Setup() {
 	c.r.Post(prefix+"/games", c.createGameHandler)
 	c.r.Get(prefix+"/games/{id}", c.getGameById)
+	c.r.Patch(prefix+"/games/{id}/close", c.closeGameHandler)
 }

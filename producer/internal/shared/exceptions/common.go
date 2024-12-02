@@ -10,4 +10,14 @@ var (
 		StatusCode: 503,
 		Message:    "Service unavailable",
 	}
+
+	ExcWrongAPIKey Exception = Exception{
+		StatusCode: 401,
+		Message:    "API key is invalid or missing",
+	}
+
+	ExcAccessDenied Exception = Exception{
+		StatusCode: 403,
+		Message:    "API key is not master key",
+	}
 )

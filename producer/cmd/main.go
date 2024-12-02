@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 
 	"example.com/m/v2/internal/controllers"
@@ -9,6 +10,7 @@ import (
 	"example.com/m/v2/internal/infra/mq"
 	"example.com/m/v2/internal/repositories"
 	"example.com/m/v2/internal/shared/config"
+	"example.com/m/v2/internal/shared/middlewares"
 	events_usecases "example.com/m/v2/internal/usecases/events"
 	games_usecases "example.com/m/v2/internal/usecases/games"
 	players_usecases "example.com/m/v2/internal/usecases/players"
@@ -16,9 +18,17 @@ import (
 	"github.com/IBM/sarama"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
+	"github.com/joho/godotenv"
 )
 
+func loadEnv() {
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found")
+	}
+}
+
 func main() {
+	loadEnv()
 	config.InitConfig()
 
 	mq.InitProducer()
@@ -44,6 +54,7 @@ func diContainer(db *sql.DB, r *chi.Mux, p *sarama.SyncProducer) {
 	playersUseCases := players_usecases.NewPlayersUseCases(playersRepository, teamsUseCases)
 	eventsUseCases := events_usecases.NewEventUseCases(p, playersUseCases, teamsUseCases, gamesUseCases)
 
+	r.Use(middlewares.Authenticate)
 	controllers.NewPlayersController(r, playersUseCases).Setup()
 	controllers.NewTeamsController(r, teamsUseCases).Setup()
 	controllers.NewEventsController(r, eventsUseCases).Setup()
