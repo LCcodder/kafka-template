@@ -6,5 +6,5 @@ export const menuActionsKeyboard = Markup.inlineKeyboard([
 ])
 
 export const openMenuKeyboard = Markup.inlineKeyboard([
-  [ { text: 'Menu', callback_data: 'open_menu' } ]
+  [ { text: 'Menu', callback_data: 'menu' } ]
 ])

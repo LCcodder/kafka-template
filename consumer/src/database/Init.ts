@@ -1,6 +1,8 @@
 import { Sequelize } from "sequelize-typescript";
 import { User } from "../models/User";
 import { GameSubscription } from "../models/Subscriptions";
+import { Game } from "../models/Game";
+import { Team } from "../models/Team";
 
 export const initDataSource = async (): Promise<Sequelize> => {
   const sequelize = new Sequelize({
@@ -9,7 +11,7 @@ export const initDataSource = async (): Promise<Sequelize> => {
     username: 'root',
     password: 'robocopid12',
     storage: ':memory:',
-    models: [User, GameSubscription],
+    models: [User, GameSubscription, Team, Game],  
   });
   await sequelize.sync()
   return sequelize

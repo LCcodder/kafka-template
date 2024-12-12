@@ -9,12 +9,10 @@ import { Query } from "mysql2/typings/mysql/lib/protocol/sequences/Query";
 import { GAME_DOESNT_EXIST, SUBSCRIPTION_ALREADY_EXISTS } from "../../common/exceptions/SubscriptionExamples";
 
 export class SubscriptionsService {
-  constructor(private connection: Sequelize, private usermodel: typeof User, private gameSubModel: typeof GameSubscription) {}
+  constructor(private connection: Sequelize, private userModel: typeof User, private gameSubModel: typeof GameSubscription) {}
   
   private async doesGameExist(id: number): Promise<boolean> {
     const result = await this.connection.query("SELECT * FROM `games` WHERE id = " + id + ";", { type: QueryTypes.SELECT })
-    // if (!result.length) return false
-    console.log(result)
     return Boolean(result.length)
   }
 
@@ -39,7 +37,7 @@ export class SubscriptionsService {
  
   @withExceptionCatch
   public async getGamesSubscriptionsByUserId(id: string): Promise<GameSubscription[] | Exception> {
-    const user = await this.usermodel.findByPk(id)
+    const user = await this.userModel.findByPk(id)
     if (!user) {
       return USER_NOT_FOUND
     }

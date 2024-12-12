@@ -1,6 +1,7 @@
 import { Column, Model, Table, AutoIncrement, PrimaryKey, DataType, ForeignKey } from "sequelize-typescript";
 import { User } from "./User";
 import { InferAttributes, InferCreationAttributes } from "sequelize";
+import { Game } from "./Game";
 
 
 @Table({
@@ -22,5 +23,6 @@ export class GameSubscription extends Model<InferAttributes<GameSubscription>, I
   user_id!: string
 
   @Column({type: DataType.BIGINT})
+  @ForeignKey(() => Game)
   game_id!: string
 }
