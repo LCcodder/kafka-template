@@ -9,3 +9,4 @@ export const SUBSCRIPTION_ALREADY_EXISTS: Exception = {
   message: "Subscription already exists",
   critical: false
 }
+

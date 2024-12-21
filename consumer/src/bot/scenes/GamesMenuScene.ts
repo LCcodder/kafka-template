@@ -1,48 +1,59 @@
-import { Scenes } from "telegraf"
+import { Markup, Scenes } from "telegraf"
 import { GamesService } from "../../services/games/GamesService"
 import { SubscriptionsService } from "../../services/subscriptions/SubscriptionsService"
 import { isException } from "../../common/utils/guards/IsException"
-import { GamesToSubscribe, SubscribedGames } from "../static/messages/Messages"
-import { gamesMenuKeyboard, inactionKeyboard } from "../static/markups/GamesMenuMarkups"
+import { GamesToSubscribe, SubscribedGames } from "../messages/Messages"
+import { actionExitMarkup } from "../markups/CommonMarkups"
+import { isAwaitKeyword } from "typescript"
 
-export const initGamesMenuScene = (
+export const subscribeToGameScene = (
   gamesService: GamesService,
   subscriptionsService: SubscriptionsService
 ) => {
-  const gamesScene = new Scenes.BaseScene<Scenes.SceneContext>("games_subscriptions_menu")
+  const scene = new Scenes.WizardScene<Scenes.WizardContext>('subscribe_game', 
+    async (ctx) => {
+      const games = await gamesService.getGamesInProgress()
+      if (isException(games)) {
+        await ctx.sendMessage(games.message)  
+        ctx.scene.leave()
+        return
+      }
+  
+      (ctx.wizard.state as any).games = games
+  
+      await ctx.sendMessage(GamesToSubscribe(games), actionExitMarkup)
+      return ctx.wizard.next();
+    },
+    async (ctx) => {
+      // @ts-ignore
+      const msg = ctx.message?.text
 
-  gamesScene.enter(async (ctx) => {
-    await ctx.deleteMessage(ctx.message?.message_id)
+      if (msg === "Exit") {
+        await ctx.sendMessage("Cancelling subscription", Markup.removeKeyboard());
+        ctx.scene.leave()
+        return
+      }
 
-    const games = await gamesService.getSubscribedGames(ctx.chat?.id as unknown as string)
-    if (isException(games)) {
-      await ctx.sendMessage(games.message)  
-      return
-    }
-    
-    (ctx.session as any).myData = {}
-    await ctx.sendMessage(SubscribedGames(games), gamesMenuKeyboard)
-  })
+      const selectedGame = (ctx.wizard.state as any).games[msg - 1]
+      if (!selectedGame) {
+        await ctx.sendMessage("Please enter position from the list")
+        return
+      }
 
-  gamesScene.action('choose_game_to_subscribe', async (ctx) => {
-    const games = await gamesService.getGamesInProgress()
-    if (isException(games)) {
-      await ctx.sendMessage(games.message)  
-      return
-    }
+      const createdSubscription = await subscriptionsService.createGameSubscription({
+        user_id: ctx.message?.chat.id.toString() as string,
+        game_id: selectedGame.id
+      })
+      if (isException(createdSubscription)) {
+        await ctx.sendMessage(createdSubscription.message)  
+        ctx.scene.leave()
+        return
+      }
+      
+      await ctx.sendMessage("Successfully subscribed to game")
+      ctx.scene.leave()
+    },
+  )
 
-    (ctx.session as any).myData.games = games
-
-    await ctx.sendMessage(GamesToSubscribe(games), inactionKeyboard)
-  })
-
-  gamesScene.action('subscribe_to_game', async (ctx) => {
-
-  })
-
-  gamesScene.action('unsubscribe_from_game', async (ctx) => {
-
-  })
-
-  return gamesScene
+  return scene
 }

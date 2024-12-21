@@ -1,5 +1,5 @@
-import { GameWithTeamNames } from "../../../common/dto/Game"
-import { Game } from "../../../models/Game"
+import { GameWithTeamNames } from "../../common/dto/Game"
+import { Game } from "../../models/Game"
 
 type Message = string
 export const UserCreated = (): Message => "User successfully registrated\n"
@@ -32,7 +32,7 @@ export const GamesToSubscribe = (games: GameWithTeamNames[]): Message => {
   
   for (let i = 0; i < games.length; i++) {
     const game = games[i]
-    message += `${i}: ${game.team_one_name} VS ${game.team_two_name}\n`
+    message += `${i+1}: ${game.team_one_name} VS ${game.team_two_name}\n`
   }
   return message
 }

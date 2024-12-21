@@ -3,12 +3,14 @@ import { Exception } from "../../common/utils/types/Exception";
 import { Game } from "../../models/Game";
 import { withExceptionCatch } from "../../common/decorators/WithExceptionCatch";
 import { GameWithTeamNames } from "../../common/dto/Game";
+import { SUBSCRIPTION_ALREADY_EXISTS } from "../../common/exceptions/SubscriptionExamples";
 
 
 
 export class GamesService {
   constructor(private connection: Sequelize, private gameModel: typeof Game) {}
 
+  @withExceptionCatch
   public async getSubscribedGames(userId: string): Promise<GameWithTeamNames[] | Exception> {
     return []
   }
@@ -22,4 +24,3 @@ export class GamesService {
   }
 }
 
-export { GameWithTeamNames };

@@ -17,7 +17,8 @@ export class SubscriptionsService {
   }
 
   private async doesGameSubscriptionExist(userId: string, gameId: number): Promise<boolean> {
-    const result = await this.connection.query("SELECT * FROM `users_subscriptions_games` WHERE game_id = " + gameId + " AND user_id = " + userId + ";")
+    const result = await this.connection.query("SELECT * FROM `users_subscriptions_games` WHERE game_id = " + gameId + " AND user_id = " + userId + ";", { type: QueryTypes.SELECT })
+    console.log(result)
     return Boolean(result.length)
   }
 

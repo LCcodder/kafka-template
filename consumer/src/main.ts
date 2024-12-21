@@ -6,27 +6,30 @@ import { bindCommands } from './bot/CommandsBinder'
 import { UserIDChecker } from './bot/middlewares/IDCheckerMiddleware'
 import { SubscriptionsService } from './services/subscriptions/SubscriptionsService'
 import { GameSubscription } from './models/Subscriptions'
-import { initGamesMenuScene } from './bot/scenes/GamesMenuScene'
+import { subscribeToGameScene } from './bot/scenes/GamesMenuScene'
 import { GamesService } from './services/games/GamesService'
 import { Game } from './models/Game'
+import { WizardContext, WizardContextWizard } from 'telegraf/typings/scenes'
 
 const main = async () => {
-  const bot = new Telegraf<Scenes.SceneContext>("6605761193:AAGn6uzdsdmHnAJcaWi8mrskz0esrCCcbuo")
+  const bot = new Telegraf<Scenes.WizardContext>("6605761193:AAGn6uzdsdmHnAJcaWi8mrskz0esrCCcbuo")
   const connection = await initDataSource()
   
   const usersService = new UsersService(User)
   const subscriptionsService = new SubscriptionsService(connection, User, GameSubscription)
   const gamesService = new GamesService(connection, Game)
 
-  const stage = new Scenes.Stage<Scenes.SceneContext>([ initGamesMenuScene(gamesService, subscriptionsService) ], { ttl: 10 })
+  const stage = new Scenes.Stage<Scenes.WizardContext>(
+    [ 
+      subscribeToGameScene(gamesService, subscriptionsService)
+    ], { ttl: 10 }
+  )
+
   bot.use(session())
   bot.use(stage.middleware())
   bot.use(UserIDChecker(usersService))
-  bindCommands(bot, usersService, subscriptionsService)
   
-  bot.on('message', (ctx) => {
-    ctx.reply('One Hi')
-  })
+  bindCommands(bot, usersService, gamesService, subscriptionsService)
   
   bot.launch()
   
