@@ -2,9 +2,9 @@ import { Markup, Scenes } from "telegraf"
 import { GamesService } from "../../services/games/GamesService"
 import { SubscriptionsService } from "../../services/subscriptions/SubscriptionsService"
 import { isException } from "../../common/utils/guards/IsException"
-import { GamesToSubscribe, SubscribedGames } from "../messages/Messages"
-import { actionExitMarkup } from "../markups/CommonMarkups"
-import { isAwaitKeyword } from "typescript"
+import { actionExitMarkup } from "../static/markups/CommonMarkups"
+import { GamesToSubscribe, SubscibedToGame } from "../static/messages/GameSubscriptions"
+import { CancellingSubscription, EnterPositionFromList } from "../static/messages/Shared"
 
 export const subscribeToGameScene = (
   gamesService: GamesService,
@@ -15,7 +15,7 @@ export const subscribeToGameScene = (
       const games = await gamesService.getGamesInProgress()
       if (isException(games)) {
         await ctx.sendMessage(games.message)  
-        ctx.scene.leave()
+        await ctx.scene.leave()
         return
       }
   
@@ -29,14 +29,14 @@ export const subscribeToGameScene = (
       const msg = ctx.message?.text
 
       if (msg === "Exit") {
-        await ctx.sendMessage("Cancelling subscription", Markup.removeKeyboard());
-        ctx.scene.leave()
+        await ctx.sendMessage(CancellingSubscription(), Markup.removeKeyboard());
+        await ctx.scene.leave()
         return
       }
 
       const selectedGame = (ctx.wizard.state as any).games[msg - 1]
       if (!selectedGame) {
-        await ctx.sendMessage("Please enter position from the list")
+        await ctx.sendMessage(EnterPositionFromList())
         return
       }
 
@@ -46,12 +46,12 @@ export const subscribeToGameScene = (
       })
       if (isException(createdSubscription)) {
         await ctx.sendMessage(createdSubscription.message)  
-        ctx.scene.leave()
+        await ctx.scene.leave()
         return
       }
       
-      await ctx.sendMessage("Successfully subscribed to game")
-      ctx.scene.leave()
+      await ctx.sendMessage(SubscibedToGame())
+      await ctx.scene.leave()
     },
   )
 

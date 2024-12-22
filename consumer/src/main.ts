@@ -3,7 +3,7 @@ import { initDataSource } from './database/Init'
 import { UsersService } from './services/users/UsersService'
 import { User } from './models/User'
 import { bindCommands } from './bot/CommandsBinder'
-import { UserIDChecker } from './bot/middlewares/IDCheckerMiddleware'
+import { UserSignUp } from './bot/middlewares/SignUpMiddleware'
 import { SubscriptionsService } from './services/subscriptions/SubscriptionsService'
 import { GameSubscription } from './models/Subscriptions'
 import { subscribeToGameScene } from './bot/scenes/GamesMenuScene'
@@ -27,7 +27,7 @@ const main = async () => {
 
   bot.use(session())
   bot.use(stage.middleware())
-  bot.use(UserIDChecker(usersService))
+  bot.use(UserSignUp(usersService))
   
   bindCommands(bot, usersService, gamesService, subscriptionsService)
   

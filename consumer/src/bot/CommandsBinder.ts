@@ -2,7 +2,6 @@ import { Context, Markup, Scenes, Telegraf } from "telegraf";
 import { Update } from "telegraf/typings/core/types/typegram";
 import { UsersService } from "../services/users/UsersService";
 import { isException } from "../common/utils/guards/IsException";
-import { OpenMenu, UserCreated, Menu } from "./messages/Messages";
 import { SubscriptionsService } from "../services/subscriptions/SubscriptionsService";
 import { GameSubscription } from "../models/Subscriptions";
 import { menuControllerFactory } from "./controllers/Menu";
@@ -18,7 +17,7 @@ export const bindCommands = (
   subscriptionsService: SubscriptionsService
 ): void => {
 
-  bot.command('start', menuControllerFactory(subscriptionsService))
-  bot.command("subscibed_games", getSubscribedGamesControllerFactory(gamesService))
+  bot.command('start', menuControllerFactory(gamesService))
+  bot.command("subscribed_games", getSubscribedGamesControllerFactory(gamesService))
   bot.command("subscribe_to_game", (ctx) => ctx.scene.enter('subscribe_game'))
 }

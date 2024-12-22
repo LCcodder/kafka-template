@@ -10,7 +10,6 @@ export const initDataSource = async (): Promise<Sequelize> => {
     dialect: 'mysql',
     username: 'root',
     password: 'robocopid12',
-    storage: ':memory:',
     models: [User, GameSubscription, Team, Game],  
   });
   await sequelize.sync()

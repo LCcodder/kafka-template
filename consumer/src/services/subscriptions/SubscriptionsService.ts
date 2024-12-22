@@ -35,14 +35,5 @@ export class SubscriptionsService {
     const createdSubscription = await this.gameSubModel.create(subscription as any)
     return createdSubscription
   }
- 
-  @withExceptionCatch
-  public async getGamesSubscriptionsByUserId(id: string): Promise<GameSubscription[] | Exception> {
-    const user = await this.userModel.findByPk(id)
-    if (!user) {
-      return USER_NOT_FOUND
-    }
 
-    return user.gameSubscriptions ? user.gameSubscriptions : []
-  }
 }
