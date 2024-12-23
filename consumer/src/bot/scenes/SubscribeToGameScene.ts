@@ -3,24 +3,31 @@ import { GamesService } from "../../services/games/GamesService"
 import { SubscriptionsService } from "../../services/subscriptions/SubscriptionsService"
 import { isException } from "../../common/utils/guards/IsException"
 import { actionExitMarkup } from "../static/markups/CommonMarkups"
-import { GamesToSubscribe, SubscibedToGame } from "../static/messages/GameSubscriptions"
-import { CancellingSubscription, EnterPositionFromList } from "../static/messages/Shared"
+import { GamesToSubscribe, NoGamesToSubscribe, SubscibedToGame } from "../static/messages/GameSubscriptionsMessages"
+import { CancellingSubscription, EnterPositionFromList } from "../static/messages/SharedMessages"
+import { SUBSCRIBE_TO_GAME } from "../static/actions/ScenesActions"
 
 export const subscribeToGameScene = (
   gamesService: GamesService,
   subscriptionsService: SubscriptionsService
 ) => {
-  const scene = new Scenes.WizardScene<Scenes.WizardContext>('subscribe_game', 
+  const scene = new Scenes.WizardScene<Scenes.WizardContext>(SUBSCRIBE_TO_GAME, 
     async (ctx) => {
       const games = await gamesService.getGamesInProgress()
       if (isException(games)) {
-        await ctx.sendMessage(games.message)  
+        await ctx.sendMessage(games.message, Markup.removeKeyboard())  
         await ctx.scene.leave()
         return
       }
-  
+      
+      if (!games.length) {
+        await ctx.sendMessage(NoGamesToSubscribe(), Markup.removeKeyboard())  
+        await ctx.scene.leave()
+        return
+      }
+
       (ctx.wizard.state as any).games = games
-  
+      
       await ctx.sendMessage(GamesToSubscribe(games), actionExitMarkup)
       return ctx.wizard.next();
     },

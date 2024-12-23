@@ -7,6 +7,8 @@ import { GameSubscription } from "../models/Subscriptions";
 import { menuControllerFactory } from "./controllers/Menu";
 import { getSubscribedGamesControllerFactory } from "./controllers/GetSubscribedGames";
 import { GamesService } from "../services/games/GamesService";
+import { chooseEntityForInteractionScene } from "./scenes/ChooseEntityForInteractionScene";
+import { SUBSCRIBE, SUBSCRIBE_TO_GAME } from "./static/actions/ScenesActions";
 
 
 
@@ -18,6 +20,6 @@ export const bindCommands = (
 ): void => {
 
   bot.command('start', menuControllerFactory(gamesService))
-  bot.command("subscribed_games", getSubscribedGamesControllerFactory(gamesService))
-  bot.command("subscribe_to_game", (ctx) => ctx.scene.enter('subscribe_game'))
+  bot.command('subscribe', (ctx) => ctx.scene.enter(SUBSCRIBE))
+  bot.command("mygames", getSubscribedGamesControllerFactory(gamesService))
 }

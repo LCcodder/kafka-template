@@ -10,3 +10,7 @@ export const SUBSCRIPTION_ALREADY_EXISTS: Exception = {
   critical: false
 }
 
+export const SUBSCRIPTION_DOESNT_EXISTS: Exception = {
+  message: "Subscription doesn't exists",
+  critical: false
+}

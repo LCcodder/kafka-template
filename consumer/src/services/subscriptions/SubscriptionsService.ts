@@ -6,9 +6,10 @@ import { GameSubscription } from "../../models/Subscriptions";
 import { User } from "../../models/User";
 import { GameSubscriptionDto } from "../../common/dto/Subscription";
 import { Query } from "mysql2/typings/mysql/lib/protocol/sequences/Query";
-import { GAME_DOESNT_EXIST, SUBSCRIPTION_ALREADY_EXISTS } from "../../common/exceptions/SubscriptionExamples";
+import { GAME_DOESNT_EXIST, SUBSCRIPTION_ALREADY_EXISTS, SUBSCRIPTION_DOESNT_EXISTS } from "../../common/exceptions/SubscriptionExamples";
+import { ISubscriptionsService } from "./ISubscriptionsService";
 
-export class SubscriptionsService {
+export class SubscriptionsService implements ISubscriptionsService {
   constructor(private connection: Sequelize, private userModel: typeof User, private gameSubModel: typeof GameSubscription) {}
   
   private async doesGameExist(id: number): Promise<boolean> {
@@ -23,7 +24,7 @@ export class SubscriptionsService {
   }
 
   @withExceptionCatch
-  public async createGameSubscription(subscription: GameSubscriptionDto): Promise<GameSubscription | Exception> {
+  public async createGameSubscription(subscription: GameSubscriptionDto) {
     if (!await this.doesGameExist(subscription.game_id)) {
       return GAME_DOESNT_EXIST
     }
@@ -34,6 +35,17 @@ export class SubscriptionsService {
 
     const createdSubscription = await this.gameSubModel.create(subscription as any)
     return createdSubscription
+  }
+
+  @withExceptionCatch
+  public async deleteGameSubscription(id: number) {
+    const destroyedRows = await this.gameSubModel.destroy({
+      where: { id }
+    })
+
+    if (!destroyedRows) {
+      return SUBSCRIPTION_DOESNT_EXISTS
+    }
   }
 
 }

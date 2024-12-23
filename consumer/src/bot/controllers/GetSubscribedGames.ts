@@ -1,7 +1,7 @@
 import { Context } from "telegraf"
 import { GamesService } from "../../services/games/GamesService"
 import { isException } from "../../common/utils/guards/IsException"
-import { SubscribedGames } from "../static/messages/GameSubscriptions"
+import { SubscribedGames } from "../static/messages/GameSubscriptionsMessages"
 
 export const getSubscribedGamesControllerFactory = (gamesService: GamesService) => async (ctx: Context) => {
 

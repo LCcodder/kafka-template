@@ -16,7 +16,8 @@ Games subscriptions: ${stats.gamesSubscriptionsCount}
 Teams subscriptions: ${stats.teamsSubscriptionsCount}
 
 Commands list:
-/subscribed_games
-/subscribe_to_game
-
+/subscribe - subscribe to team/game events
+/unsubscribe - unsubscribe from team/game events
+/mygames - show subscribed games
+/myteams - show subscribed teams
 `

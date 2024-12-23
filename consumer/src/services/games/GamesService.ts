@@ -4,11 +4,12 @@ import { Game } from "../../models/Game";
 import { withExceptionCatch } from "../../common/decorators/WithExceptionCatch";
 import { GameWithTeamNames } from "../../common/dto/Game";
 import { SUBSCRIPTION_ALREADY_EXISTS } from "../../common/exceptions/SubscriptionExamples";
+import { IGamesService } from "./IGamesService";
 
 
 
-export class GamesService {
-  constructor(private connection: Sequelize, private gameModel: typeof Game) {}
+export class GamesService implements IGamesService {
+  constructor(private connection: Sequelize) {}
 
   @withExceptionCatch
   public async getSubscribedGames(userId: string): Promise<GameWithTeamNames[] | Exception> {

@@ -12,7 +12,6 @@ export const SubscribedGames = (games: GameWithTeamNames[]): Message => {
 }
 
 export const GamesToSubscribe = (games: GameWithTeamNames[]): Message => {
-  if (!games.length) return "There are no games to subscribe"
   let message = "Enter position of game to subscribe:\n"
   
   for (let i = 0; i < games.length; i++) {
@@ -21,5 +20,7 @@ export const GamesToSubscribe = (games: GameWithTeamNames[]): Message => {
   }
   return message
 }
+
+export const NoGamesToSubscribe = (): Message => "There are no games to subscribe"
 
 export const SubscibedToGame = (): Message => "Successfully subscribed to game"

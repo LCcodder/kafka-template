@@ -4,7 +4,7 @@ import { GameSubscription } from "../../models/Subscriptions";
 import { Context } from "telegraf";
 import { GamesService } from "../../services/games/GamesService";
 import { GameWithTeamNames } from "../../common/dto/Game";
-import { Menu } from "../static/messages/Menu";
+import { Menu } from "../static/messages/MenuMessages";
 
 export const menuControllerFactory = (gamesService: GamesService) => 
   async (ctx: Context) => {
