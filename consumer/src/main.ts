@@ -5,26 +5,36 @@ import { User } from './models/User'
 import { bindCommands } from './bot/CommandsBinder'
 import { signUpUser } from './bot/middlewares/SignUpMiddleware'
 import { SubscriptionsService } from './services/subscriptions/SubscriptionsService'
-import { GameSubscription } from './models/Subscriptions'
+import { GameSubscription, TeamSubscription } from './models/Subscriptions'
 import { subscribeToGameScene } from './bot/scenes/SubscribeToGameScene'
 import { GamesService } from './services/games/GamesService'
-import { Game } from './models/Game'
-import { WizardContext, WizardContextWizard } from 'telegraf/typings/scenes'
 import { chooseEntityForInteractionScene } from './bot/scenes/ChooseEntityForInteractionScene'
-import { SUBSCRIBE, SUBSCRIBE_TO_GAME } from './bot/static/actions/ScenesActions'
+import { SUBSCRIBE, SUBSCRIBE_TO_GAME, SUBSCRIBE_TO_TEAM, UNSUBSCRIBE, UNSUBSCRIBE_FROM_GAME, UNSUBSCRIBE_FROM_TEAM } from './bot/static/actions/ScenesActions'
+import { unsubscribeFromGameScene } from './bot/scenes/UnsubscribeFromGame'
+import { subscribeToTeamScene } from './bot/scenes/SubscribeToTeamScene'
+import { TeamsService } from './services/teams/TeamsService'
+import { Team } from './models/Team'
+import { unsubscribeFromTeamScene } from './bot/scenes/UnsubscribeFromTeamScene'
+import { createControllers } from './bot/controllers/ControllersFactory'
 
 const main = async () => {
   const bot = new Telegraf<Scenes.WizardContext>("6605761193:AAGn6uzdsdmHnAJcaWi8mrskz0esrCCcbuo")
   const connection = await initDataSource()
   
   const usersService = new UsersService(User)
-  const subscriptionsService = new SubscriptionsService(connection, User, GameSubscription)
+  const subscriptionsService = new SubscriptionsService(connection, GameSubscription, TeamSubscription)
   const gamesService = new GamesService(connection)
+  const teamsService = new TeamsService(connection, Team)
 
   const stage = new Scenes.Stage<Scenes.WizardContext>(
     [ 
       subscribeToGameScene(gamesService, subscriptionsService),
-      chooseEntityForInteractionScene(SUBSCRIBE, SUBSCRIBE_TO_GAME, '')
+      subscribeToTeamScene(teamsService, subscriptionsService),
+      chooseEntityForInteractionScene(SUBSCRIBE, SUBSCRIBE_TO_GAME, SUBSCRIBE_TO_TEAM),
+
+      unsubscribeFromTeamScene(teamsService, subscriptionsService),
+      unsubscribeFromGameScene(gamesService, subscriptionsService),      
+      chooseEntityForInteractionScene(UNSUBSCRIBE, UNSUBSCRIBE_FROM_GAME, UNSUBSCRIBE_FROM_TEAM)
     ], { ttl: 10 }
   )
 
@@ -32,7 +42,8 @@ const main = async () => {
   bot.use(stage.middleware())
   bot.use(signUpUser(usersService))
   
-  bindCommands(bot, usersService, gamesService, subscriptionsService)
+  const controllers = createControllers(gamesService, teamsService)
+  bindCommands(bot, controllers)
   
   bot.launch()
   

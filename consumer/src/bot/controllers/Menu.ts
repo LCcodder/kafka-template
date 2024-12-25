@@ -1,23 +1,33 @@
-import { SubscriptionsService } from "../../services/subscriptions/SubscriptionsService"
 import { isException } from "../../common/utils/guards/IsException";
-import { GameSubscription } from "../../models/Subscriptions";
 import { Context } from "telegraf";
-import { GamesService } from "../../services/games/GamesService";
-import { GameWithTeamNames } from "../../common/dto/Game";
+import { SubscribedGame } from "../../common/dto/Game";
 import { Menu } from "../static/messages/MenuMessages";
+import { IGamesService } from "../../services/games/IGamesService";
+import { ITeamsService } from "../../services/teams/ITeamsService";
+import { SubscribedTeam } from "../../common/dto/Team";
 
-export const menuControllerFactory = (gamesService: GamesService) => 
+export const menuControllerFactory = (
+  gamesService: IGamesService,
+  teamsService: ITeamsService
+) => 
   async (ctx: Context) => {
 
   const userId = ctx.chat?.id.toString() as string
-  const subscribedGames = await gamesService.getSubscribedGames(userId)
+  const subscribedGames = await gamesService.getSubscribedGames(userId) as SubscribedGame[]
   if (isException(subscribedGames) && subscribedGames.critical) {
     await ctx.sendMessage(subscribedGames.message)
     return
   }
+  
+  const subscribedTeams = await teamsService.getSubscribedTeams(userId) as SubscribedTeam[]
+  if (isException(subscribedTeams) && subscribedTeams.critical) {
+    await ctx.sendMessage(subscribedTeams.message)
+    return
+  }
+
   await ctx.sendMessage(Menu({
-    gamesSubscriptionsCount: (subscribedGames as GameWithTeamNames[]).length,
-    teamsSubscriptionsCount: 0,
+    gamesSubscriptionsCount: subscribedGames.length,
+    teamsSubscriptionsCount: subscribedTeams.length,
     telegramUsername: ctx.from?.username as string
   }))
 }

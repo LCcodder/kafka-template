@@ -1,34 +1,34 @@
 import { Markup, Scenes } from "telegraf";
 import { ISubscriptionsService } from "../../services/subscriptions/ISubscriptionsService";
-import { UNSUBSCRIBE_FROM_GAME } from "../static/actions/ScenesActions";
+import { UNSUBSCRIBE_FROM_TEAM } from "../static/actions/ScenesActions";
 import { isException } from "../../common/utils/guards/IsException";
-import { IGamesService } from "../../services/games/IGamesService";
-import { NoSubscribedGames, GamesToUnsubscribe, UnsubscribedFromGame } from "../static/messages/GameSubscriptionsMessages";
 import { actionExitMarkup } from "../static/markups/CommonMarkups";
 import { CancellingInteraction, EnterPositionFromList } from "../static/messages/SharedMessages";
+import { ITeamsService } from "../../services/teams/ITeamsService";
+import { NoSubscribedTeams, TeamsToUnsubscribe, UnsubscribedFromTeam } from "../static/messages/TeamSubscriptionsMessages";
 
-export const unsubscribeFromGameScene = (
-  gamesService: IGamesService,
+export const unsubscribeFromTeamScene = (
+  teamsService: ITeamsService,
   subscriptionsService: ISubscriptionsService,
 ) => {
-  const scene = new Scenes.WizardScene<Scenes.WizardContext>(UNSUBSCRIBE_FROM_GAME,
+  const scene = new Scenes.WizardScene<Scenes.WizardContext>(UNSUBSCRIBE_FROM_TEAM,
     async (ctx) => {
-      const games = await gamesService.getSubscribedGames(ctx.message?.chat.id as unknown as string)
-      if (isException(games)) {
-        await ctx.sendMessage(games.message, Markup.removeKeyboard())  
+      const teams = await teamsService.getSubscribedTeams(ctx.message?.chat.id as unknown as string)
+      if (isException(teams)) {
+        await ctx.sendMessage(teams.message, Markup.removeKeyboard())  
         await ctx.scene.leave()
         return
       }
 
-      if (!games.length) {
-        await ctx.sendMessage(NoSubscribedGames(), Markup.removeKeyboard())  
+      if (!teams.length) {
+        await ctx.sendMessage(NoSubscribedTeams(), Markup.removeKeyboard())  
         await ctx.scene.leave()
         return
       }
 
-      (ctx.wizard.state as any).games = games
+      (ctx.wizard.state as any).teams = teams
 
-      await ctx.sendMessage(GamesToUnsubscribe(games), actionExitMarkup)
+      await ctx.sendMessage(TeamsToUnsubscribe(teams), actionExitMarkup)
       return ctx.wizard.next();
     },
     async (ctx) => {
@@ -41,20 +41,20 @@ export const unsubscribeFromGameScene = (
         return
       }
 
-      const selectedGame = (ctx.wizard.state as any).games[msg - 1]
-      if (!selectedGame) {
+      const selectedTeam = (ctx.wizard.state as any).teams[msg - 1]
+      if (!selectedTeam) {
         await ctx.sendMessage(EnterPositionFromList())
         return
       }
 
-      const deleteState = await subscriptionsService.deleteGameSubscription(selectedGame.id)
+      const deleteState = await subscriptionsService.deleteTeamSubscription(selectedTeam.id)
       if (isException(deleteState)) {
         await ctx.sendMessage(deleteState.message, Markup.removeKeyboard())  
         await ctx.scene.leave()
         return
       }
 
-      await ctx.sendMessage(UnsubscribedFromGame(), Markup.removeKeyboard())
+      await ctx.sendMessage(UnsubscribedFromTeam(), Markup.removeKeyboard())
       await ctx.scene.leave()
     }
   )

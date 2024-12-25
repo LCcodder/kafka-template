@@ -18,26 +18,24 @@ export const chooseEntityForInteractionScene = (
 
       switch (msg) {
         case "exit":
+          await ctx.scene.leave()
           await ctx.sendMessage(CancellingInteraction(), Markup.removeKeyboard());
-          await ctx.scene.leave()
           return
-
+          
         case "game":
+          await ctx.scene.leave()
           await ctx.scene.enter(gameInteractionSceneId)
-          await ctx.scene.leave()
           return
-
+          
         case "team":
-          await ctx.scene.enter(teamInteractionSceneId)
           await ctx.scene.leave()
+          await ctx.scene.enter(teamInteractionSceneId)
           return
-
+          
         default:
-          await ctx.sendMessage(ChooseCorrectEntity());
-      }
-      
+          await ctx.sendMessage(ChooseCorrectEntity());          
+      } 
     }
-
   )
 
   return scene

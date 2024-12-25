@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS teams (
     id serial primary key,
     name VARCHAR(32)
@@ -22,8 +21,8 @@ CREATE TABLE IF NOT EXISTS games (
     team_one_id bigint unsigned,
     team_two_id bigint unsigned,
     is_ended boolean,
-    created_at timestamp,
-    updated_at timestamp,
+    created_at datetime,
+    updated_at datetime,
     FOREIGN KEY (team_one_id) REFERENCES teams(id) ON DELETE CASCADE,
     FOREIGN KEY (team_two_id) REFERENCES teams(id) ON DELETE CASCADE
 );

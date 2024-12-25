@@ -1,15 +1,15 @@
 import { Markup, Scenes } from "telegraf"
-import { GamesService } from "../../services/games/GamesService"
-import { SubscriptionsService } from "../../services/subscriptions/SubscriptionsService"
 import { isException } from "../../common/utils/guards/IsException"
 import { actionExitMarkup } from "../static/markups/CommonMarkups"
-import { GamesToSubscribe, NoGamesToSubscribe, SubscibedToGame } from "../static/messages/GameSubscriptionsMessages"
-import { CancellingSubscription, EnterPositionFromList } from "../static/messages/SharedMessages"
+import { GamesToSubscribe, NoGamesToSubscribe, SubscribedToGame } from "../static/messages/GameSubscriptionsMessages"
+import { CancellingInteraction, EnterPositionFromList } from "../static/messages/SharedMessages"
 import { SUBSCRIBE_TO_GAME } from "../static/actions/ScenesActions"
+import { ISubscriptionsService } from "../../services/subscriptions/ISubscriptionsService"
+import { IGamesService } from "../../services/games/IGamesService"
 
 export const subscribeToGameScene = (
-  gamesService: GamesService,
-  subscriptionsService: SubscriptionsService
+  gamesService: IGamesService,
+  subscriptionsService: ISubscriptionsService
 ) => {
   const scene = new Scenes.WizardScene<Scenes.WizardContext>(SUBSCRIBE_TO_GAME, 
     async (ctx) => {
@@ -36,7 +36,7 @@ export const subscribeToGameScene = (
       const msg = ctx.message?.text
 
       if (msg === "Exit") {
-        await ctx.sendMessage(CancellingSubscription(), Markup.removeKeyboard());
+        await ctx.sendMessage(CancellingInteraction(), Markup.removeKeyboard());
         await ctx.scene.leave()
         return
       }
@@ -52,12 +52,12 @@ export const subscribeToGameScene = (
         game_id: selectedGame.id
       })
       if (isException(createdSubscription)) {
-        await ctx.sendMessage(createdSubscription.message)  
+        await ctx.sendMessage(createdSubscription.message, Markup.removeKeyboard())  
         await ctx.scene.leave()
         return
       }
       
-      await ctx.sendMessage(SubscibedToGame())
+      await ctx.sendMessage(SubscribedToGame(), Markup.removeKeyboard())
       await ctx.scene.leave()
     },
   )

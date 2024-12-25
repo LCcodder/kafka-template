@@ -1,8 +1,10 @@
-import { GameSubscriptionDto } from "../../common/dto/Subscription";
+import { GameSubscriptionDto, TeamSubscriptionDto } from "../../common/dto/Subscription";
 import { Exception } from "../../common/utils/types/Exception";
-import { GameSubscription } from "../../models/Subscriptions";
+import { GameSubscription, TeamSubscription } from "../../models/Subscriptions";
 
 export interface ISubscriptionsService {
   createGameSubscription(subscription: GameSubscriptionDto): Promise<GameSubscription | Exception>
-  deleteGameSubscription(subscriptionId: number): Promise<Exception | undefined>
+  deleteGameSubscription(subscriptionId: number): Promise<Exception | void>
+  createTeamSubscription(subscription: TeamSubscriptionDto): Promise<TeamSubscription | Exception>
+  deleteTeamSubscription(subscriptionId: number): Promise<Exception | void>
 }

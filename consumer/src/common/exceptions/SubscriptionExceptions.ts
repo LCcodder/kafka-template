@@ -5,6 +5,11 @@ export const GAME_DOESNT_EXIST: Exception = {
   critical: false
 }
 
+export const TEAM_DOESNT_EXIST: Exception = {
+  message: "Team doesn't exist",
+  critical: false
+}
+
 export const SUBSCRIPTION_ALREADY_EXISTS: Exception = {
   message: "Subscription already exists",
   critical: false
