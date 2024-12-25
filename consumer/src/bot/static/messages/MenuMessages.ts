@@ -1,6 +1,5 @@
 import { Message } from "../../../common/utils/types/Message"
 
-export const OpenMenu = (): Message => "Open menu to see available actions"
 
 type MenuUserStats = {
   telegramUsername: string
@@ -12,10 +11,10 @@ export const Menu = (stats: MenuUserStats): Message => `
 Welcome to subscription aggregator bot!
 
 Current subscriptions for @${stats.telegramUsername}:
-Games subscriptions: ${stats.gamesSubscriptionsCount}
-Teams subscriptions: ${stats.teamsSubscriptionsCount}
+Games subscriptions 🏀: ${stats.gamesSubscriptionsCount}
+Teams subscriptions 👬: ${stats.teamsSubscriptionsCount}
 
-Commands list:
+Commands list 📜:
 /subscribe - subscribe to team/game events
 /unsubscribe - unsubscribe from team/game events
 /mygames - show subscribed games
