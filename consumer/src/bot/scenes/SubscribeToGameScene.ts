@@ -1,5 +1,5 @@
 import { Markup, Scenes } from "telegraf"
-import { isException } from "../../common/utils/guards/IsException"
+import { isException } from "../../common/utils/guards/ExceptionGuard"
 import { actionExitMarkup } from "../static/markups/CommonMarkups"
 import { GamesToSubscribe, NoGamesToSubscribe, SubscribedToGame } from "../static/messages/GameSubscriptionsMessages"
 import { CancellingInteraction, EnterPositionFromList } from "../static/messages/SharedMessages"

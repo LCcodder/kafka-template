@@ -1,7 +1,7 @@
 import { Markup, Scenes } from "telegraf";
 import { ISubscriptionsService } from "../../services/subscriptions/ISubscriptionsService";
 import { UNSUBSCRIBE_FROM_GAME } from "../static/actions/ScenesActions";
-import { isException } from "../../common/utils/guards/IsException";
+import { isException } from "../../common/utils/guards/ExceptionGuard";
 import { IGamesService } from "../../services/games/IGamesService";
 import { NoSubscribedGames, GamesToUnsubscribe, UnsubscribedFromGame } from "../static/messages/GameSubscriptionsMessages";
 import { actionExitMarkup } from "../static/markups/CommonMarkups";

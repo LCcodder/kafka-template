@@ -1,6 +1,5 @@
 import { Exception } from "../types/Exception";
 
 export const isException = (target: unknown): target is Exception => {
-  // @ts-ignore
-  return target && typeof (target as Exception)["message"] === 'string'
+  return Boolean(target) && typeof (target as Exception)["message"] === 'string'
 }

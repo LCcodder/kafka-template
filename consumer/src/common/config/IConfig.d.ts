@@ -4,6 +4,7 @@ export interface IConfig {
   dbName: string
   dbUser: string
   dbPassword: string
-
+  dbHost: string
+  
   log(): void
 }

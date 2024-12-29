@@ -61,6 +61,7 @@ func (r *GamesRepository) Get(id int64) (*dto.Game, error) {
 		return nil, nil
 	}
 	if err != nil {
+		fmt.Println((err))
 		return nil, err
 	}
 

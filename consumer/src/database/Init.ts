@@ -11,6 +11,7 @@ export const initDataSource = async (): Promise<Sequelize> => {
     username: 'root',
     password: 'robocopid12',
     models: [User, GameSubscription, TeamSubscription, Team, Game],  
+    host: "localhost"
   });
   await sequelize.sync()
   return sequelize

@@ -1,4 +1,4 @@
-import { isException } from "../../common/utils/guards/IsException";
+import { isException } from "../../common/utils/guards/ExceptionGuard";
 import { Context } from "telegraf";
 import { SubscribedGame } from "../../common/dto/Game";
 import { Menu } from "../static/messages/MenuMessages";

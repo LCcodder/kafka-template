@@ -16,15 +16,22 @@ import { TeamsService } from './services/teams/TeamsService'
 import { Team } from './models/Team'
 import { unsubscribeFromTeamScene } from './bot/scenes/UnsubscribeFromTeamScene'
 import { createControllers } from './bot/controllers/ControllersFactory'
+import { EventsService } from './services/events/service/EventsService'
+import { Kafka } from "kafkajs"
 
 const main = async () => {
   const bot = new Telegraf<Scenes.WizardContext>("6605761193:AAGn6uzdsdmHnAJcaWi8mrskz0esrCCcbuo")
+
   const connection = await initDataSource()
-  
-  const usersService = new UsersService(User)
+  const mq = new Kafka({ brokers: ['localhost:29092'] })
+
+  const usersService = new UsersService(connection, User)
   const subscriptionsService = new SubscriptionsService(connection, GameSubscription, TeamSubscription)
   const gamesService = new GamesService(connection)
   const teamsService = new TeamsService(connection, Team)
+  
+  // const eventService = new EventsService(bot.telegram, mq.consumer({ groupId: 'telegram-bot' }))
+  // await eventService.listenEvents()
 
   const stage = new Scenes.Stage<Scenes.WizardContext>(
     [ 
