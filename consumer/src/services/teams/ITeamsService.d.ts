@@ -1,5 +1,5 @@
-import { SubscribedTeam } from "../../common/dto/Team";
-import { Exception } from "../../common/utils/types/Exception";
+import { SubscribedTeam } from "../../shared/dto/Team";
+import { Exception } from "../../shared/utils/types/Exception";
 import { Team } from "../../models/Team";
 
 export interface ITeamsService {

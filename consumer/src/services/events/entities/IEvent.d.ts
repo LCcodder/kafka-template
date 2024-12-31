@@ -1,4 +1,4 @@
-import { BareGame } from "../../../common/dto/Game"
+import { BareGame } from "../../../shared/dto/Game"
 
 export type EventDtoSharedFields = {
   game: BareGame

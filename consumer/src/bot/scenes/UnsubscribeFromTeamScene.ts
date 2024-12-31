@@ -1,7 +1,7 @@
 import { Markup, Scenes } from "telegraf";
 import { ISubscriptionsService } from "../../services/subscriptions/ISubscriptionsService";
 import { UNSUBSCRIBE_FROM_TEAM } from "../static/actions/ScenesActions";
-import { isException } from "../../common/utils/guards/ExceptionGuard";
+import { isException } from "../../shared/utils/guards/ExceptionGuard";
 import { actionExitMarkup } from "../static/markups/CommonMarkups";
 import { CancellingInteraction, EnterPositionFromList } from "../static/messages/SharedMessages";
 import { ITeamsService } from "../../services/teams/ITeamsService";

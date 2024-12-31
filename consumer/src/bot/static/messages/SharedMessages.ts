@@ -1,4 +1,4 @@
-import { Message } from "../../../common/utils/types/Message"
+import { Message } from "../../../shared/utils/types/Message"
 
 export const EnterPositionFromList = (): Message => "Please enter position from the list ⬇️"
 

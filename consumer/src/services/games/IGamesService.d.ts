@@ -1,5 +1,5 @@
-import { SubscribedGame } from "../../common/dto/Game"
-import { Exception } from "../../common/utils/types/Exception"
+import { SubscribedGame } from "../../shared/dto/Game"
+import { Exception } from "../../shared/utils/types/Exception"
 
 export interface IGamesService {
   getSubscribedGames(userId: string): Promise<SubscribedGame[] | Exception>

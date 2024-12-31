@@ -1,9 +1,9 @@
 import { QueryTypes, Sequelize } from "sequelize";
-import { withExceptionCatch } from "../../common/decorators/WithExceptionCatch";
-import { UserDto } from "../../common/dto/User";
-import { USER_ALREADY_REGISTERED, USER_NOT_FOUND } from "../../common/exceptions/UserExceptions";
+import { withExceptionCatch } from "../../shared/decorators/WithExceptionCatch";
+import { UserDto } from "../../shared/dto/User";
+import { USER_ALREADY_REGISTERED, USER_NOT_FOUND } from "../../shared/exceptions/UserExceptions";
 import { User } from "../../models/User";
-import { IUsersService } from "./IUsersService";
+import { IUsersService, UsersSubscriptionsIdentifiers } from "./IUsersService";
 
 export class UsersService implements IUsersService {
   constructor(private connection: Sequelize, private model: typeof User) {}
@@ -26,6 +26,20 @@ export class UsersService implements IUsersService {
   @withExceptionCatch
   public async getTeamSubscribers(teamId: number) {
     const query = 'select users.id from `users` inner join `users_subscriptions_teams` on users_subscriptions_teams.user_id = users.id and users_subscriptions_teams.team_id =' + teamId + ';'
+    const result = (await this.connection.query(query, { type: QueryTypes.SELECT })) as UserDto[]
+    
+    return result.length ? result : []
+  }
+
+  // To test
+  @withExceptionCatch
+  public async getSubscribers(ids: UsersSubscriptionsIdentifiers) {
+    const query = 'select users.id from `users` inner join `users_subscriptions_teams` on users_subscriptions_teams.user_id = users.id and users_subscriptions_teams.team_id =' + ids.teamOneId + ';' +
+    'union' +
+    'select users.id from `users` inner join `users_subscriptions_teams` on users_subscriptions_teams.user_id = users.id and users_subscriptions_teams.team_id =' + ids.teamTwoId + ';' +
+    'union' +
+    'select users.id from `users` inner join `users_subscriptions_games` on users_subscriptions_games.user_id = users.id and users_subscriptions_games.game_id =' + ids.gameId + ';'
+  
     const result = (await this.connection.query(query, { type: QueryTypes.SELECT })) as UserDto[]
     
     return result.length ? result : []

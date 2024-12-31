@@ -1,5 +1,5 @@
-import { SubscribedTeam } from "../../../common/dto/Team";
-import { Message } from "../../../common/utils/types/Message";
+import { SubscribedTeam } from "../../../shared/dto/Team";
+import { Message } from "../../../shared/utils/types/Message";
 import { Team } from "../../../models/Team";
 
 export const NoTeamsToSubscribe = (): Message => "There are no teams to subscribe ❌"

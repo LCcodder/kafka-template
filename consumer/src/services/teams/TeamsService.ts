@@ -1,7 +1,7 @@
 import { QueryTypes, Sequelize } from "sequelize";
-import { withExceptionCatch } from "../../common/decorators/WithExceptionCatch";
+import { withExceptionCatch } from "../../shared/decorators/WithExceptionCatch";
 import { Team } from "../../models/Team";
-import { SubscribedTeam } from "../../common/dto/Team";
+import { SubscribedTeam } from "../../shared/dto/Team";
 
 export class TeamsService {
   constructor(private connection: Sequelize, private teamModel: typeof Team) {}

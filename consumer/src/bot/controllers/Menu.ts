@@ -1,10 +1,10 @@
-import { isException } from "../../common/utils/guards/ExceptionGuard";
+import { isException } from "../../shared/utils/guards/ExceptionGuard";
 import { Context } from "telegraf";
-import { SubscribedGame } from "../../common/dto/Game";
+import { SubscribedGame } from "../../shared/dto/Game";
 import { Menu } from "../static/messages/MenuMessages";
 import { IGamesService } from "../../services/games/IGamesService";
 import { ITeamsService } from "../../services/teams/ITeamsService";
-import { SubscribedTeam } from "../../common/dto/Team";
+import { SubscribedTeam } from "../../shared/dto/Team";
 
 export const menuControllerFactory = (
   gamesService: IGamesService,

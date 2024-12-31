@@ -1,4 +1,4 @@
-import { Message } from "../../../common/utils/types/Message"
+import { Message } from "../../../shared/utils/types/Message"
 
 
 type MenuUserStats = {

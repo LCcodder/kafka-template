@@ -1,5 +1,5 @@
-import { SubscribedGame } from "../../../common/dto/Game"
-import { Message } from "../../../common/utils/types/Message"
+import { SubscribedGame } from "../../../shared/dto/Game"
+import { Message } from "../../../shared/utils/types/Message"
 import moment from "moment"
 
 

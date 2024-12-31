@@ -1,5 +1,5 @@
 import { Context } from "telegraf"
-import { isException } from "../../common/utils/guards/ExceptionGuard"
+import { isException } from "../../shared/utils/guards/ExceptionGuard"
 import { ITeamsService } from "../../services/teams/ITeamsService"
 import { NoSubscribedTeams, SubscribedTeams } from "../static/messages/TeamSubscriptionsMessages"
 

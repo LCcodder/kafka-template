@@ -1,8 +1,8 @@
 import { QueryTypes, Sequelize } from "sequelize";
-import { withExceptionCatch } from "../../common/decorators/WithExceptionCatch";
+import { withExceptionCatch } from "../../shared/decorators/WithExceptionCatch";
 import { GameSubscription, TeamSubscription } from "../../models/Subscriptions";
-import { GameSubscriptionDto, TeamSubscriptionDto } from "../../common/dto/Subscription";
-import { GAME_DOESNT_EXIST, SUBSCRIPTION_ALREADY_EXISTS, SUBSCRIPTION_DOESNT_EXISTS, TEAM_DOESNT_EXIST } from "../../common/exceptions/SubscriptionExceptions";
+import { GameSubscriptionDto, TeamSubscriptionDto } from "../../shared/dto/Subscription";
+import { GAME_DOESNT_EXIST, SUBSCRIPTION_ALREADY_EXISTS, SUBSCRIPTION_DOESNT_EXISTS, TEAM_DOESNT_EXIST } from "../../shared/exceptions/SubscriptionExceptions";
 import { ISubscriptionsService } from "./ISubscriptionsService";
 
 export class SubscriptionsService implements ISubscriptionsService {

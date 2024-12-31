@@ -1,4 +1,4 @@
-import { Action } from "../../../common/utils/types/Action";
+import { Action } from "../../../shared/utils/types/Action";
 
 // TODO: remake to enum
 

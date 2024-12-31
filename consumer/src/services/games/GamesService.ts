@@ -1,6 +1,6 @@
 import { QueryTypes, Sequelize } from "sequelize";
-import { withExceptionCatch } from "../../common/decorators/WithExceptionCatch";
-import { SubscribedGame } from "../../common/dto/Game";
+import { withExceptionCatch } from "../../shared/decorators/WithExceptionCatch";
+import { SubscribedGame } from "../../shared/dto/Game";
 import { IGamesService } from "./IGamesService";
 
 
