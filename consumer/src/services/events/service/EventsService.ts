@@ -1,9 +1,9 @@
-import { Kafka, Consumer, EachMessagePayload, KafkaMessage } from "kafkajs"
+import { Consumer, EachMessagePayload } from "kafkajs"
 import { Telegram } from "telegraf";
-import { eventFactory } from "../entities/Event";
 import { Event } from "../entities/Event";
 import { IUsersService } from "../../users/IUsersService";
 import { isException } from "../../../shared/utils/guards/ExceptionGuard";
+import { eventFactory } from "../entities/EventFactory";
 
 export class EventsService {
   constructor(
@@ -19,38 +19,24 @@ export class EventsService {
   }
 
 
-  private async eachMessage({ message, topic }: EachMessagePayload) {
+  private async eachMessage({ message, topic }: EachMessagePayload): Promise<void> {
     const event = eventFactory(topic, message) as Event
 
-    const firstTeamSubs = await this.usersService.getTeamSubscribers(event.teamOneId)
-    const secondTeamSubs = await this.usersService.getTeamSubscribers(event.teamTwoId)
-    const gameSubs = await this.usersService.getGameSubscribers(event.gameId)
-    // todo
-    if (isException(firstTeamSubs) || isException(secondTeamSubs) || isException(gameSubs)) {
-      console.log("[FATAL] Database internal error while getting subscribers")
-      return
-    }
-    
-
-    let allSubscibers = [...firstTeamSubs, ...secondTeamSubs, ...gameSubs]
-
-    // changing array data structure from '{ id: string }' to 'string'
-    allSubscibers.map((v, i, a) => {
-      // @ts-ignore
-      a[i] = v.id
+    const subscribers = await this.usersService.getSubscribers({
+      teamOneId: event.teamOneId,
+      teamTwoId: event.teamTwoId,
+      gameId: event.gameId
     })
+    if (isException(subscribers)) return
     
-    // removing all duplicates from subs (e.g. users that subscribed for both teams for example)
-    const allSubscibersIds = [...new Set(allSubscibers)] as unknown as string[]
 
-    for (const chatId of allSubscibersIds) {
+    for (const subscriber of subscribers) {
+
       try {
-        await this.telegram.sendMessage(chatId, event.buildTelegramMessage())
-      } catch (e) {
-        console.log(e)
-      }
-    }
+        await this.telegram.sendMessage(subscriber.id, event.buildTelegramMessage())        
+      } catch {}
 
+    }
   }
 
   public async listenEvents() {
@@ -58,7 +44,7 @@ export class EventsService {
     await this.subscribeToTopics()
 
     await this.consumer.run({
-      eachMessage: this.eachMessage
+      eachMessage: this.eachMessage.bind(this)
     })
   }
 }

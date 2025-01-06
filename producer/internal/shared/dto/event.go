@@ -15,8 +15,10 @@ type ScoreToPublish struct {
 
 	Game         Game   `json:"game"`
 	PlayerScored Player `json:"player_scored"`
-	TeamScored   Team   `json:"team_scored"`
 	Points       uint   `json:"points"`
+
+	ThisTeam     Team `json:"this_team"`
+	OpposingTeam Team `json:"opposing_team"`
 
 	Quarter uint   `json:"quarter"`
 	Time    string `json:"time"`
@@ -41,7 +43,9 @@ type FoulToPublish struct {
 
 	OnPlayer Player `json:"on_player"`
 	ByPlayer Player `json:"by_player"`
-	ByTeam   Team   `json:"by_team"`
+
+	ThisTeam     Team `json:"this_team"`
+	OpposingTeam Team `json:"opposing_team"`
 
 	Quarter uint   `json:"quarter"`
 	Time    string `json:"time"`
@@ -65,7 +69,8 @@ type SubstitutionToPublish struct {
 	WhomPlayer Player `json:"whom_player"`
 	ToPlayer   Player `json:"to_player"`
 
-	InTeam Team `json:"in_team"`
+	ThisTeam     Team `json:"this_team"`
+	OpposingTeam Team `json:"opposing_team"`
 
 	Quarter uint   `json:"quarter"`
 	Time    string `json:"time"`

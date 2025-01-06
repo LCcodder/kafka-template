@@ -6,7 +6,10 @@ import { User } from "../../models/User";
 import { IUsersService, UsersSubscriptionsIdentifiers } from "./IUsersService";
 
 export class UsersService implements IUsersService {
-  constructor(private connection: Sequelize, private model: typeof User) {}
+  constructor(
+    private connection: Sequelize, 
+    private model: typeof User
+  ) {}
 
   @withExceptionCatch
   public async getUserById(id: string) {
@@ -24,30 +27,14 @@ export class UsersService implements IUsersService {
   }
 
   @withExceptionCatch
-  public async getTeamSubscribers(teamId: number) {
-    const query = 'select users.id from `users` inner join `users_subscriptions_teams` on users_subscriptions_teams.user_id = users.id and users_subscriptions_teams.team_id =' + teamId + ';'
-    const result = (await this.connection.query(query, { type: QueryTypes.SELECT })) as UserDto[]
-    
-    return result.length ? result : []
-  }
-
-  // To test
-  @withExceptionCatch
-  public async getSubscribers(ids: UsersSubscriptionsIdentifiers) {
-    const query = 'select users.id from `users` inner join `users_subscriptions_teams` on users_subscriptions_teams.user_id = users.id and users_subscriptions_teams.team_id =' + ids.teamOneId + ';' +
-    'union' +
-    'select users.id from `users` inner join `users_subscriptions_teams` on users_subscriptions_teams.user_id = users.id and users_subscriptions_teams.team_id =' + ids.teamTwoId + ';' +
-    'union' +
-    'select users.id from `users` inner join `users_subscriptions_games` on users_subscriptions_games.user_id = users.id and users_subscriptions_games.game_id =' + ids.gameId + ';'
+  public async getSubscribers({ teamOneId, teamTwoId, gameId }: UsersSubscriptionsIdentifiers) {
+    const query = 
+    'SELECT users.id FROM `users` INNER JOIN `users_subscriptions_teams` ON users_subscriptions_teams.user_id = users.id AND users_subscriptions_teams.team_id = ' + teamOneId +
+    ' UNION ' +
+    'SELECT users.id FROM `users` INNER JOIN `users_subscriptions_teams` ON users_subscriptions_teams.user_id = users.id AND users_subscriptions_teams.team_id = ' + teamTwoId +
+    ' UNION ' +
+    'SELECT users.id FROM `users` INNER JOIN `users_subscriptions_games` ON users_subscriptions_games.user_id = users.id AND users_subscriptions_games.game_id = ' + gameId + ';'
   
-    const result = (await this.connection.query(query, { type: QueryTypes.SELECT })) as UserDto[]
-    
-    return result.length ? result : []
-  }
-
-  @withExceptionCatch
-  public async getGameSubscribers(gameId: number) {
-    const query = 'select users.id from `users` inner join `users_subscriptions_games` on users_subscriptions_games.user_id = users.id and users_subscriptions_games.game_id =' + gameId + ';'
     const result = (await this.connection.query(query, { type: QueryTypes.SELECT })) as UserDto[]
     
     return result.length ? result : []

@@ -1,17 +1,17 @@
 import { Markup, Scenes } from "telegraf"
 import { isException } from "../../shared/utils/guards/ExceptionGuard"
-import { actionExitMarkup } from "../static/markups/CommonMarkups"
+import { actionExitMarkup } from "../static/markups/Markups"
 import { GamesToSubscribe, NoGamesToSubscribe, SubscribedToGame } from "../static/messages/GameSubscriptionsMessages"
 import { CancellingInteraction, EnterPositionFromList } from "../static/messages/SharedMessages"
-import { SUBSCRIBE_TO_GAME } from "../static/actions/ScenesActions"
 import { ISubscriptionsService } from "../../services/subscriptions/ISubscriptionsService"
 import { IGamesService } from "../../services/games/IGamesService"
+import { ACTIONS } from "../static/actions/ScenesActions"
 
 export const subscribeToGameScene = (
   gamesService: IGamesService,
   subscriptionsService: ISubscriptionsService
 ) => {
-  const scene = new Scenes.WizardScene<Scenes.WizardContext>(SUBSCRIBE_TO_GAME, 
+  const scene = new Scenes.WizardScene<Scenes.WizardContext>(ACTIONS.SUBSCRIBE_TO_GAME, 
     async (ctx) => {
       const games = await gamesService.getGamesInProgress()
       if (isException(games)) {

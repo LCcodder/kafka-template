@@ -38,7 +38,11 @@ func (uc *EventUseCases) PublishScore(s *dto.Score) (*dto.ScoreToPublish, *excep
 	if exc != nil {
 		return nil, exc
 	}
-	teamScored, exc := uc.tuc.GetTeamById(playerScored.TeamID)
+	thisTeam, exc := uc.tuc.GetTeamById(playerScored.TeamID)
+	if exc != nil {
+		return nil, exc
+	}
+	opposingTeam, exc := uc.tuc.GetTeamById(getOpposingTeamId(thisTeam.ID, *game))
 	if exc != nil {
 		return nil, exc
 	}
@@ -50,14 +54,17 @@ func (uc *EventUseCases) PublishScore(s *dto.Score) (*dto.ScoreToPublish, *excep
 	scoreToPublish := dto.ScoreToPublish{
 		ID:           uuid.New().String(),
 		Game:         *game,
-		TeamScored:   *teamScored,
 		PlayerScored: *playerScored,
 		Points:       s.Points,
-		Quarter:      s.Quarter,
-		Time:         s.Time,
+
+		ThisTeam:     *thisTeam,
+		OpposingTeam: *opposingTeam,
+
+		Quarter: s.Quarter,
+		Time:    s.Time,
 	}
 
-	if _, exc = uc.guc.UpdateScore(game.ID, teamScored.ID, s.Points); exc != nil {
+	if _, exc = uc.guc.UpdateScore(game.ID, thisTeam.ID, s.Points); exc != nil {
 		return nil, exc
 	}
 
@@ -90,7 +97,12 @@ func (uc *EventUseCases) PublishFoul(f *dto.Foul) (*dto.FoulToPublish, *exceptio
 		return nil, exc
 	}
 
-	teamFouled, exc := uc.tuc.GetTeamById(playerFouled.TeamID)
+	thisTeam, exc := uc.tuc.GetTeamById(playerFouled.TeamID)
+	if exc != nil {
+		return nil, exc
+	}
+
+	opposingTeam, exc := uc.tuc.GetTeamById(getOpposingTeamId(thisTeam.ID, *game))
 	if exc != nil {
 		return nil, exc
 	}
@@ -113,9 +125,12 @@ func (uc *EventUseCases) PublishFoul(f *dto.Foul) (*dto.FoulToPublish, *exceptio
 		Type:     f.Time,
 		OnPlayer: *playerWhichWasFouled,
 		ByPlayer: *playerFouled,
-		ByTeam:   *teamFouled,
-		Quarter:  f.Quarter,
-		Time:     f.Time,
+
+		ThisTeam:     *thisTeam,
+		OpposingTeam: *opposingTeam,
+
+		Quarter: f.Quarter,
+		Time:    f.Time,
 	}
 
 	msg, err := createProducerMessage("Fouls", foulToPublish.ID, &foulToPublish)
@@ -151,7 +166,12 @@ func (uc *EventUseCases) PublishSubstitution(s *dto.Substitution) (*dto.Substitu
 		return nil, &exceptions.ExcCantReplacePlayerFromAnotherTeam
 	}
 
-	team, exc := uc.tuc.GetTeamById(outgoingPlayer.TeamID)
+	thisTeam, exc := uc.tuc.GetTeamById(outgoingPlayer.TeamID)
+	if exc != nil {
+		return nil, exc
+	}
+
+	opposingTeam, exc := uc.tuc.GetTeamById(getOpposingTeamId(thisTeam.ID, *game))
 	if exc != nil {
 		return nil, exc
 	}
@@ -170,7 +190,9 @@ func (uc *EventUseCases) PublishSubstitution(s *dto.Substitution) (*dto.Substitu
 
 		WhomPlayer: *outgoingPlayer,
 		ToPlayer:   *incomingPlayer,
-		InTeam:     *team,
+
+		ThisTeam:     *thisTeam,
+		OpposingTeam: *opposingTeam,
 
 		Quarter: s.Quarter,
 		Time:    s.Time,

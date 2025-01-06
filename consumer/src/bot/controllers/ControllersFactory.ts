@@ -10,7 +10,7 @@ export type Controllers = {
   menu: ReturnType<typeof menuControllerFactory>
 }
 
-export const createControllers = (
+export const controllersFactory = (
   gamesService: IGamesService,
   teamsService: ITeamsService
 ): Controllers => {

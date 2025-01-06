@@ -1,17 +1,17 @@
 import { Markup, Scenes } from "telegraf";
 import { ISubscriptionsService } from "../../services/subscriptions/ISubscriptionsService";
-import { SUBSCRIBE_TO_TEAM } from "../static/actions/ScenesActions";
 import { ITeamsService } from "../../services/teams/ITeamsService";
 import { isException } from "../../shared/utils/guards/ExceptionGuard";
 import { NoTeamsToSubscribe, SubscribedToTeam, TeamsToSubscribe } from "../static/messages/TeamSubscriptionsMessages";
-import { actionExitMarkup } from "../static/markups/CommonMarkups";
+import { actionExitMarkup } from "../static/markups/Markups";
 import { CancellingInteraction, EnterPositionFromList } from "../static/messages/SharedMessages";
+import { ACTIONS } from "../static/actions/ScenesActions"
 
 export const subscribeToTeamScene = (
   teamsService: ITeamsService,
   subscriptionsService: ISubscriptionsService,
 ) => {
-  const scene = new Scenes.WizardScene<Scenes.WizardContext>(SUBSCRIBE_TO_TEAM,
+  const scene = new Scenes.WizardScene<Scenes.WizardContext>(ACTIONS.SUBSCRIBE_TO_TEAM,
     async (ctx) => {
       const teams = await teamsService.getTeams()
       if (isException(teams)) {

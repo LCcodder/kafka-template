@@ -1,6 +1,6 @@
 import { Markup, Scenes } from "telegraf"
 import { CancellingInteraction, ChooseCorrectEntity, ChooseEntity } from "../static/messages/SharedMessages"
-import { chooseEntityMarkup } from "../static/markups/CommonMarkups"
+import { chooseEntityMarkup } from "../static/markups/Markups"
 
 export const chooseEntityForInteractionScene = (
   targetSceneId: string, 

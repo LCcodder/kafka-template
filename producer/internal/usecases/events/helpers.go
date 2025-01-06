@@ -40,3 +40,10 @@ func validateAction(game dto.Game, player dto.Player) *exceptions.Exception {
 func playersAreFromSameTeam(playerOne dto.Player, playerTwo dto.Player) bool {
 	return playerOne.TeamID == playerTwo.TeamID
 }
+
+func getOpposingTeamId(thisTeamId int64, game dto.Game) int64 {
+	if thisTeamId == game.TeamOneID {
+		return game.TeamTwoID
+	}
+	return game.TeamOneID
+}

@@ -1,17 +1,17 @@
 import { Markup, Scenes } from "telegraf";
 import { ISubscriptionsService } from "../../services/subscriptions/ISubscriptionsService";
-import { UNSUBSCRIBE_FROM_GAME } from "../static/actions/ScenesActions";
+import { ACTIONS } from "../static/actions/ScenesActions"
 import { isException } from "../../shared/utils/guards/ExceptionGuard";
 import { IGamesService } from "../../services/games/IGamesService";
 import { NoSubscribedGames, GamesToUnsubscribe, UnsubscribedFromGame } from "../static/messages/GameSubscriptionsMessages";
-import { actionExitMarkup } from "../static/markups/CommonMarkups";
+import { actionExitMarkup } from "../static/markups/Markups";
 import { CancellingInteraction, EnterPositionFromList } from "../static/messages/SharedMessages";
 
 export const unsubscribeFromGameScene = (
   gamesService: IGamesService,
   subscriptionsService: ISubscriptionsService,
 ) => {
-  const scene = new Scenes.WizardScene<Scenes.WizardContext>(UNSUBSCRIBE_FROM_GAME,
+  const scene = new Scenes.WizardScene<Scenes.WizardContext>(ACTIONS.UNSUBSCRIBE_FROM_GAME,
     async (ctx) => {
       const games = await gamesService.getSubscribedGames(ctx.message?.chat.id as unknown as string)
       if (isException(games)) {

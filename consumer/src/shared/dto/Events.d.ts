@@ -10,33 +10,33 @@ type Player = {
   team_id: number
 }
 
-type QuarterAndTime = {
+type EventDto<T> = {
   quarter: number
   time: string
-}
 
-export type ScoreDto = {
+  this_team: Team
+  opposing_team: Team
+} & T
+
+export type ScoreDto = EventDto<{
   id: string
   game: Game,
-  player_scored: Player
-  team_scored: Team
+  player_scored: Player  
   points: number
-} & QuarterAndTime
+}>
 
 
-export type SubstitutionDto = {
+export type SubstitutionDto = EventDto<{
   id: string
   game: Game
   whom_player: Player
   to_player: Player
-  in_team: Team
-} & QuarterAndTime
+}>
 
-export type FoulDto = {
+export type FoulDto = EventDto<{
   id: string
   game: Game
   type: string
   on_player: Player
   by_player: Player
-  by_team: Team
-} & QuarterAndTime
+}>

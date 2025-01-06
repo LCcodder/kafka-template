@@ -1,4 +1,6 @@
 import { SERVICE_UNAVAILABLE } from "../exceptions/CommonExceptions"
+import { logger } from "../utils/etc/PinoLogger"
+import { Exception } from "../utils/types/Exception"
 
 export const withExceptionCatch = (_target: any, _key: string, descriptor: PropertyDescriptor) => {
   const originalMethod = descriptor.value
@@ -7,10 +9,10 @@ export const withExceptionCatch = (_target: any, _key: string, descriptor: Prope
     try {
       return await originalMethod.apply(this, args)
     } catch (error) {
-      console.log(error)
+      if ((error as Exception).critical) logger.error(error)
       return SERVICE_UNAVAILABLE
     }
   }
-
+  
   return descriptor
 }

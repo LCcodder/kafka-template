@@ -1,14 +1,5 @@
 import { KafkaMessage } from "kafkajs"
 import { EventDtoSharedFields, IEvent } from "./IEvent"
-import { FoulEvent } from "./FoulEvent"
-import { ScoreEvent } from "./ScoreEvent"
-import { SubstitutionEvent } from "./SubstitutionEvent"
-
-enum TOPICS {
-  Fouls = 'Fouls',
-  Score = 'Score',
-  Substitutions = 'Substitutions'
-}
 
 export abstract class Event<T extends EventDtoSharedFields = EventDtoSharedFields> implements IEvent {
   constructor(
@@ -40,13 +31,3 @@ export abstract class Event<T extends EventDtoSharedFields = EventDtoSharedField
   public abstract buildTelegramMessage(): string
 }
 
-export const eventFactory = (topic: string, message: KafkaMessage): Event | undefined => {
-  switch(topic) {
-    case TOPICS.Fouls:
-      return new FoulEvent(message)
-    case TOPICS.Score:
-      return new ScoreEvent(message)
-    case TOPICS.Substitutions:
-      return new SubstitutionEvent(message)
-  }
-}
