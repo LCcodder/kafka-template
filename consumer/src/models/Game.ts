@@ -15,14 +15,14 @@ export class Game extends Model {
   declare id: number
 
   @Column({type: DataType.INTEGER})
-  declare team_one_score: number
+  declare team_home_score: number
 
   @Column({type: DataType.INTEGER})
-  declare team_two_score: number
+  declare team_away_score: number
 
   @Column({type: DataType.BIGINT.UNSIGNED})
   @ForeignKey(() => Team)
-  declare team_one_id: number
+  declare team_home_id: number
 
   // @HasOne(() => Team, {
   //   foreignKey: 'team_one_id',
@@ -32,7 +32,7 @@ export class Game extends Model {
 
   @Column({type: DataType.BIGINT.UNSIGNED})
   @ForeignKey(() => Team)
-  declare team_two_id: number
+  declare team_away_id: number
 
   // @HasOne(() => Team, {
   //   foreignKey: 'team_two_id',

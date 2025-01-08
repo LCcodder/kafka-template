@@ -23,8 +23,8 @@ export class EventsService {
     const event = eventFactory(topic, message) as Event
 
     const subscribers = await this.usersService.getSubscribers({
-      teamOneId: event.teamOneId,
-      teamTwoId: event.teamTwoId,
+      teamHomeId: event.teamHomeId,
+      teamAwayId: event.teamAwayId,
       gameId: event.gameId
     })
     if (isException(subscribers)) return

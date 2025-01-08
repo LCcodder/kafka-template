@@ -6,7 +6,7 @@ export type EventDtoSharedFields = {
 
 export interface IEvent {
   get eventId(): string
-  get teamOneId(): number
-  get teamTwoId(): number
+  get teamHomeId(): number
+  get teamAwayId(): number
   get gameId(): number
 }

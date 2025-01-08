@@ -16,10 +16,10 @@ CREATE TABLE IF NOT EXISTS players (
 
 CREATE TABLE IF NOT EXISTS games (
     id serial primary key,
-    team_one_score int unsigned,
-    team_two_score int unsigned,
-    team_one_id bigint unsigned,
-    team_two_id bigint unsigned,
+    team_home_score int unsigned,
+    team_away_score int unsigned,
+    team_home_id bigint unsigned,
+    team_away_id bigint unsigned,
     is_ended boolean,
     created_at datetime,
     updated_at datetime,

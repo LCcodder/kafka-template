@@ -3,8 +3,8 @@ import { Exception } from "../../shared/utils/types/Exception"
 import { User } from "../../models/User"
 
 export type UsersSubscriptionsIdentifiers = {
-  teamOneId: number
-  teamTwoId: number
+  teamHomeId: number
+  teamAwayId: number
   gameId: number
 }
 

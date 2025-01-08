@@ -16,12 +16,12 @@ export abstract class Event<T extends EventDtoSharedFields = EventDtoSharedField
     return this.message.key?.toString('utf-8') as string
   }
 
-  public get teamOneId() {
-    return this.body.game.team_one_id
+  public get teamHomeId() {
+    return this.body.game.team_home_id
   }
 
-  public get teamTwoId() {
-    return this.body.game.team_two_id
+  public get teamAwayId() {
+    return this.body.game.team_away_id
   }
 
   public get gameId() {

@@ -5,10 +5,10 @@ import { FoulDto, ScoreDto, SubstitutionDto } from "../../../shared/dto/Events";
 import { Message } from "../../../shared/utils/types/Message";
 
 const getScore = (teamOne: Team, teamTwo: Team, game: Game): string => {
-  if (game.team_one_id === teamOne.id) {
-    return `🏀 ${teamOne.name} VS ${teamTwo.name} (${game.team_one_score} : ${game.team_two_score})`
+  if (game.team_home_id === teamOne.id) {
+    return `🏀 ${teamOne.name} VS ${teamTwo.name} (${game.team_home_score} : ${game.team_away_score})`
   }
-  return `🏀 ${teamOne.name} VS ${teamTwo.name} (${game.team_two_score} : ${game.team_one_score})`
+  return `🏀 ${teamOne.name} VS ${teamTwo.name} (${game.team_away_score} : ${game.team_home_score})`
 }
 
 export const ScoreEventMessage = (score: ScoreDto): Message => `

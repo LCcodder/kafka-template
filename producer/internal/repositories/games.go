@@ -48,10 +48,10 @@ func (r *GamesRepository) Get(id int64) (*dto.Game, error) {
 
 	err := r.db.QueryRow(query).Scan(
 		&game.ID,
-		&game.TeamOneScore,
-		&game.TeamTwoScore,
-		&game.TeamOneID,
-		&game.TeamTwoID,
+		&game.TeamHomeScore,
+		&game.TeamAwayScore,
+		&game.TeamHomeID,
+		&game.TeamAwayID,
 		&game.IsEnded,
 		&game.CreatedAt,
 		&game.UpdatedAt,

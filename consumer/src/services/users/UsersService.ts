@@ -27,11 +27,11 @@ export class UsersService implements IUsersService {
   }
 
   @withExceptionCatch
-  public async getSubscribers({ teamOneId, teamTwoId, gameId }: UsersSubscriptionsIdentifiers) {
+  public async getSubscribers({ teamHomeId, teamAwayId, gameId }: UsersSubscriptionsIdentifiers) {
     const query = 
-    'SELECT users.id FROM `users` INNER JOIN `users_subscriptions_teams` ON users_subscriptions_teams.user_id = users.id AND users_subscriptions_teams.team_id = ' + teamOneId +
+    'SELECT users.id FROM `users` INNER JOIN `users_subscriptions_teams` ON users_subscriptions_teams.user_id = users.id AND users_subscriptions_teams.team_id = ' + teamHomeId +
     ' UNION ' +
-    'SELECT users.id FROM `users` INNER JOIN `users_subscriptions_teams` ON users_subscriptions_teams.user_id = users.id AND users_subscriptions_teams.team_id = ' + teamTwoId +
+    'SELECT users.id FROM `users` INNER JOIN `users_subscriptions_teams` ON users_subscriptions_teams.user_id = users.id AND users_subscriptions_teams.team_id = ' + teamAwayId +
     ' UNION ' +
     'SELECT users.id FROM `users` INNER JOIN `users_subscriptions_games` ON users_subscriptions_games.user_id = users.id AND users_subscriptions_games.game_id = ' + gameId + ';'
   

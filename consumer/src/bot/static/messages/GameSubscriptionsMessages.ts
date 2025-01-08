@@ -7,7 +7,7 @@ export const GamesToUnsubscribe = (games: SubscribedGame[]): Message => {
   let message = "Enter position of game to unsubscribe 🔕:\n"
   for (let i = 0; i < games.length; i++) {
     const game = games[i]
-    message += `➡️ ${i+1}: ${moment(game.created_at).format('dd-mm-yyyy')} ${game.team_one_name} VS ${game.team_two_name} (${game.team_one_score} - ${game.team_two_score})\n`
+    message += `➡️ ${i+1}: ${moment(game.created_at).format('dd-mm-yyyy')} ${game.team_home_name} VS ${game.team_away_name} (${game.team_home_score} - ${game.team_away_score})\n`
   }
   return message
 }
@@ -15,7 +15,7 @@ export const GamesToUnsubscribe = (games: SubscribedGame[]): Message => {
 export const SubscribedGames = (games: SubscribedGame[]): Message => {
   let message = "Your games 🛎️:\n"
   for (const game of games) {
-    message += `➡️ ${moment(game.created_at).format('dd-mm-yyyy')} ${game.team_one_name} VS ${game.team_two_name} (${game.team_one_score} - ${game.team_two_score})\n`
+    message += `➡️ ${moment(game.created_at).format('dd-mm-yyyy')} ${game.team_home_name} VS ${game.team_away_name} (${game.team_home_score} - ${game.team_away_score})\n`
   }
   return message
 }
@@ -25,7 +25,7 @@ export const GamesToSubscribe = (games: SubscribedGame[]): Message => {
   
   for (let i = 0; i < games.length; i++) {
     const game = games[i]
-    message += `➡️ ${i+1}: ${game.team_one_name} VS ${game.team_two_name}\n`
+    message += `➡️ ${i+1}: ${game.team_home_name} VS ${game.team_away_name}\n`
   }
   return message
 }

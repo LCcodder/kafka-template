@@ -28,8 +28,8 @@ func (uc *GamesUseCases) CreateGame(g *dto.Game) (*dto.Game, *exceptions.Excepti
 	}
 
 	// nullifying to default values
-	g.TeamOneScore = 0
-	g.TeamTwoScore = 0
+	g.TeamHomeScore = 0
+	g.TeamAwayScore = 0
 	g.IsEnded = false
 	g.CreatedAt = time.Now().UTC().Format("2006-01-02 15:04:05")
 	g.UpdatedAt = time.Now().UTC().Format("2006-01-02 15:04:05")
@@ -82,10 +82,10 @@ func (uc *GamesUseCases) UpdateScore(id int64, teamScoredID int64, increment uin
 
 	data := dto.UpdateGame{}
 
-	if game.TeamOneID == teamScoredID {
-		data.TeamOneScore = game.TeamOneScore + increment
+	if game.TeamHomeID == teamScoredID {
+		data.TeamHomeScore = game.TeamHomeScore + increment
 	} else {
-		data.TeamTwoScore = game.TeamTwoScore + increment
+		data.TeamHomeScore = game.TeamHomeScore + increment
 	}
 
 	err := uc.r.Update(id, data)

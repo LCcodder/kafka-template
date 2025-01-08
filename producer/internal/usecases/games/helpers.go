@@ -6,13 +6,13 @@ import (
 )
 
 func (uc *GamesUseCases) checkTeamsExistance(g *dto.Game) *exceptions.Exception {
-	if g.TeamOneID == g.TeamTwoID {
+	if g.TeamHomeID == g.TeamAwayID {
 		return &exceptions.ExcTeamNotFound
 	}
-	if _, exc := uc.tuc.GetTeamById(g.TeamOneID); exc != nil {
+	if _, exc := uc.tuc.GetTeamById(g.TeamHomeID); exc != nil {
 		return exc
 	}
-	if _, exc := uc.tuc.GetTeamById(g.TeamTwoID); exc != nil {
+	if _, exc := uc.tuc.GetTeamById(g.TeamAwayID); exc != nil {
 		return exc
 	}
 

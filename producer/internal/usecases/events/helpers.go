@@ -23,7 +23,7 @@ func createProducerMessage[T any](topic string, eventID string, value *T) (*sara
 }
 
 func teamIsInGame(teamID int64, game dto.Game) bool {
-	return game.TeamOneID == teamID || game.TeamTwoID == teamID
+	return game.TeamHomeID == teamID || game.TeamAwayID == teamID
 }
 
 func validateAction(game dto.Game, player dto.Player) *exceptions.Exception {
@@ -42,8 +42,8 @@ func playersAreFromSameTeam(playerOne dto.Player, playerTwo dto.Player) bool {
 }
 
 func getOpposingTeamId(thisTeamId int64, game dto.Game) int64 {
-	if thisTeamId == game.TeamOneID {
-		return game.TeamTwoID
+	if thisTeamId == game.TeamHomeID {
+		return game.TeamAwayID
 	}
-	return game.TeamOneID
+	return game.TeamHomeID
 }
