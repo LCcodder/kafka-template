@@ -114,3 +114,14 @@ func (uc *GamesUseCases) CloseGame(id int64) *exceptions.Exception {
 
 	return nil
 }
+
+func (uc *GamesUseCases) GetGames(isEnded bool) (*[]dto.Game, *exceptions.Exception) {
+	games, err := uc.r.GetAll(isEnded)
+	if err != nil {
+		return nil, &exceptions.ExcDatabaseError
+	}
+	if games == nil {
+		return &[]dto.Game{}, nil
+	}
+	return games, nil
+}

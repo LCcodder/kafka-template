@@ -68,6 +68,41 @@ func (r *GamesRepository) Get(id int64) (*dto.Game, error) {
 	return &game, nil
 }
 
+func (r *GamesRepository) GetAll(isEnded bool) (*[]dto.Game, error) {
+	query, _, _ := dialect.From("games").Where(goqu.Ex{
+		"is_ended": isEnded,
+	}).ToSQL()
+
+	rows, err := r.db.Query(query)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var games []dto.Game
+	for rows.Next() {
+		var game dto.Game
+		err = rows.Scan(
+			&game.ID,
+			&game.TeamHomeScore,
+			&game.TeamAwayScore,
+			&game.TeamHomeID,
+			&game.TeamAwayID,
+			&game.IsEnded,
+			&game.CreatedAt,
+			&game.UpdatedAt,
+		)
+		if err != nil {
+			fmt.Println(err)
+			return nil, err
+		}
+		games = append(games, game)
+	}
+
+	return &games, nil
+}
+
 func (r *GamesRepository) Update(id int64, g dto.UpdateGame) error {
 	var uMap map[string]interface{}
 	inrec, _ := json.Marshal(g)

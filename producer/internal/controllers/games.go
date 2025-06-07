@@ -79,8 +79,26 @@ func (c *GamesController) closeGameHandler(w http.ResponseWriter, r *http.Reques
 	}))
 }
 
+func (c *GamesController) getGamesHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-Type", "application/json")
+
+	isEndedStr := r.URL.Query().Get("is_ended")
+	isEnded := isEndedStr == "true" || isEndedStr == "1"
+
+	games, exc := c.guc.GetGames(isEnded)
+	if exc != nil {
+		w.WriteHeader(int(exc.StatusCode))
+		w.Write(*utils.ParseResponse(exc))
+		return
+	}
+	w.WriteHeader(200)
+	w.Write(*utils.ParseResponse(games))
+
+}
+
 func (c *GamesController) Setup() {
 	c.r.Post(prefix+"/games", c.createGameHandler)
+	c.r.Get(prefix+"/games", c.getGamesHandler)
 	c.r.Get(prefix+"/games/{id}", c.getGameById)
 	c.r.Patch(prefix+"/games/{id}/close", c.closeGameHandler)
 }
