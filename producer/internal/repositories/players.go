@@ -64,3 +64,35 @@ func (r *PlayersRepository) Get(id int64) (*dto.Player, error) {
 
 	return &player, nil
 }
+
+func (r *PlayersRepository) GetAllByTeamId(id int64) (*[]dto.Player, error) {
+	query, _, _ := dialect.From("players").Where(goqu.Ex{
+		"team_id": id,
+	}).ToSQL()
+
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var players []dto.Player
+
+	for rows.Next() {
+		var player dto.Player
+		err = rows.Scan(
+			&player.ID,
+			&player.FirstName,
+			&player.LastName,
+			&player.Number,
+			&player.Position,
+			&player.TeamID,
+		)
+		if err != nil {
+			return nil, err
+		}
+		players = append(players, player)
+	}
+
+	return &players, nil
+}

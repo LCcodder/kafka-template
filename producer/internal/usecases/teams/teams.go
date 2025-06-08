@@ -38,3 +38,16 @@ func (uc *TeamsUseCases) GetTeamById(id int64) (*dto.Team, *exceptions.Exception
 
 	return team, nil
 }
+
+func (uc *TeamsUseCases) GetAllTeams() (*[]dto.Team, *exceptions.Exception) {
+	teams, err := uc.r.GetAll()
+	if err != nil {
+		return nil, &exceptions.ExcDatabaseError
+	}
+
+	if teams == nil {
+		return &[]dto.Team{}, nil
+	}
+
+	return teams, nil
+}

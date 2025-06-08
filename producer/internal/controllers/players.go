@@ -60,7 +60,22 @@ func (c *PlayersController) getPlayerById(w http.ResponseWriter, r *http.Request
 	w.Write(*utils.ParseResponse(player))
 }
 
+func (c *PlayersController) getTeamPlayersHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("content-Type", "application/json")
+	id, _ := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	players, exc := c.puc.GetPlayersByTeamId(id)
+	if exc != nil {
+		w.WriteHeader(int(exc.StatusCode))
+		w.Write(*utils.ParseResponse(exc))
+		return
+	}
+
+	w.WriteHeader(200)
+	w.Write(*utils.ParseResponse(players))
+}
+
 func (c *PlayersController) Setup() {
 	c.r.Post(prefix+"/players", c.createPlayerHandler)
 	c.r.Get(prefix+"/players/{id}", c.getPlayerById)
+	c.r.Get(prefix+"/teams/{id}/players", c.getTeamPlayersHandler)
 }

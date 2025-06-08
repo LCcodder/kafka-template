@@ -46,3 +46,21 @@ func (uc *PlayersUseCases) GetPlayerById(id int64) (*dto.Player, *exceptions.Exc
 
 	return player, nil
 }
+
+func (uc *PlayersUseCases) GetPlayersByTeamId(id int64) (*[]dto.Player, *exceptions.Exception) {
+	_, exc := uc.tuc.GetTeamById(id)
+	if exc != nil {
+		return nil, exc
+	}
+
+	players, err := uc.r.GetAllByTeamId(id)
+	if err != nil {
+		return nil, &exceptions.ExcDatabaseError
+	}
+
+	if len(*players) == 0 {
+		return &[]dto.Player{}, nil
+	}
+
+	return players, nil
+}

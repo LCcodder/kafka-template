@@ -59,3 +59,29 @@ func (r *TeamsRepository) Get(id int64) (*dto.Team, error) {
 
 	return &team, nil
 }
+
+func (r *TeamsRepository) GetAll() (*[]dto.Team, error) {
+	query, _, _ := dialect.From("teams").ToSQL()
+
+	rows, err := r.db.Query(query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var teams []dto.Team
+	for rows.Next() {
+		var team dto.Team
+		err = rows.Scan(&team.ID, &team.Name)
+		if err != nil {
+			return nil, err
+		}
+		teams = append(teams, team)
+	}
+
+	if len(teams) == 0 {
+		return &[]dto.Team{}, nil
+	}
+
+	return &teams, nil
+}
