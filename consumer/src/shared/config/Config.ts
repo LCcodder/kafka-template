@@ -1,4 +1,3 @@
-import { P } from "pino";
 import { logger } from "../utils/etc/PinoLogger";
 import { IConfig } from "./IConfig";
 require('dotenv').config()

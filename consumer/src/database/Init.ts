@@ -15,6 +15,6 @@ export const initDataSource = async (): Promise<Sequelize> => {
     host: CONFIG.dbHost
   });
   
-  await sequelize.sync()
+  // await sequelize.sync()
   return sequelize
 }

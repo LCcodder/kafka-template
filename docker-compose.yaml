@@ -10,19 +10,72 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - 22181:2181
+      - 2181:2181
+    networks:
+      - app
+    restart: always
   
-  # bot:
-  #   build: ./consumer
-  #   restart: always
-  #   depends_on:
-  #     - zookeeper
-  #     - kafka
-  #     - api
-  #   networks:
-  #     - app
-  #   environment:
-  #     - name=value
+  bot:
+    build: ./consumer
+    restart: always
+    depends_on:
+      - zookeeper
+      - kafka
+      - api
+      - db
+    networks:
+      - app
+    environment:
+      - BOT_TOKEN=6605761193:AAGn6uzdsdmHnAJcaWi8mrskz0esrCCcbuo
+      - KAFKA_CLUSTER=kafka:29092
+      - DB_NAME=basketball_aggregator
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_PORT=3306
+
+  api:
+    build: ./producer
+    restart: always
+    depends_on:
+      - zookeeper
+      - kafka
+      - db
+    networks:
+      - app
+    ports:
+      - 3000:3000
+    expose:
+      - "3000"
+    environment:
+      - KAFKA_CONNECTION=kafka:29092
+      - API_MASTER_KEY=fhjkdshfkjdsjfks
+      - DB_USER=root
+      - DB_PASSWORD=password
+      - DB_HOST=db
+      - DB_NAME=basketball_aggregator
+
+  db:
+    image: mysql:latest
+    restart: always
+    
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: basketball_aggregator
+
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - app
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
   
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -36,11 +89,14 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
+    networks:
+      - app
+    restart: always
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENERS: OUTSIDE://:29092,INTERNAL://:9092
-      KAFKA_ADVERTISED_LISTENERS: OUTSIDE://localhost:29092,INTERNAL://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: OUTSIDE://kafka:29092,INTERNAL://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,OUTSIDE:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -54,6 +110,8 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
+    networks:
+      - app
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
@@ -62,3 +120,16 @@ networks:
   app:
     name: app
     driver: bridge
+
+volumes:
+  db_data:
+    driver: local
+
+  kafka_data:
+    driver: local
+
+  zookeeper_data:
+    driver: local
+
+  kafka_ui_data:
+    driver: local
