@@ -1,0 +1,974 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "contact": {}
+    },
+    "paths": {
+        "/api/v1/games": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all games, returns list of games",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "Filter by ended games (true/false)",
+                        "name": "is_ended",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.Game"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new game, returns created game data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "parameters": [
+                    {
+                        "description": "Game data",
+                        "name": "game",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Game"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Game"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/games/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get game by ID, returns game data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Game ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Game"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/games/{id}/close": {
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get game by ID, returns game data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Games"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Game ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Game"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/games/{id}/fouls": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Publish a foul event for a game, returns event data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Events"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Game ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Foul event data",
+                        "name": "foul",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Foul"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FoulToPublish"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/games/{id}/score": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Publish a score event for a game, returns event data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Events"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Game ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Score event data",
+                        "name": "score",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Score"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ScoreToPublish"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/games/{id}/substitutions": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Publish a substitution event for a game, returns event data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Events"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Game ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Substitution event data",
+                        "name": "substitution",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Substitution"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.SubstitutionToPublish"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/players": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new player, returns created player data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Players"
+                ],
+                "parameters": [
+                    {
+                        "description": "Player data",
+                        "name": "player",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Player"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Player"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/players/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get player by ID, returns player data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Players"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Player ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Player"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teams": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get all teams, returns list of teams",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.Team"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Create a new team, returns created team data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "parameters": [
+                    {
+                        "description": "Team data",
+                        "name": "team",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.Team"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Team"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teams/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get team by ID, returns team data",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Teams"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/dto.Team"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/teams/{id}/players": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Get players by team ID, returns list of players",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Players"
+                ],
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Team ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/dto.Player"
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/exceptions.Exception"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.Foul": {
+            "type": "object",
+            "required": [
+                "from_player_id",
+                "game_id",
+                "on_player_id",
+                "quarter",
+                "time",
+                "type"
+            ],
+            "properties": {
+                "from_player_id": {
+                    "type": "integer"
+                },
+                "game_id": {
+                    "type": "integer"
+                },
+                "on_player_id": {
+                    "type": "integer"
+                },
+                "quarter": {
+                    "type": "integer",
+                    "maximum": 6,
+                    "minimum": 1
+                },
+                "time": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "minLength": 1
+                }
+            }
+        },
+        "dto.FoulToPublish": {
+            "type": "object",
+            "properties": {
+                "by_player": {
+                    "$ref": "#/definitions/dto.Player"
+                },
+                "game": {
+                    "$ref": "#/definitions/dto.Game"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "on_player": {
+                    "$ref": "#/definitions/dto.Player"
+                },
+                "opposing_team": {
+                    "$ref": "#/definitions/dto.Team"
+                },
+                "quarter": {
+                    "type": "integer"
+                },
+                "this_team": {
+                    "$ref": "#/definitions/dto.Team"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.Game": {
+            "type": "object",
+            "required": [
+                "team_away_id",
+                "team_home_id"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "is_ended": {
+                    "type": "boolean"
+                },
+                "team_away_id": {
+                    "type": "integer"
+                },
+                "team_away_score": {
+                    "type": "integer"
+                },
+                "team_home_id": {
+                    "type": "integer"
+                },
+                "team_home_score": {
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.Player": {
+            "type": "object",
+            "required": [
+                "first_name",
+                "last_name",
+                "number",
+                "position",
+                "team_id"
+            ],
+            "properties": {
+                "first_name": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "minLength": 1
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "last_name": {
+                    "type": "string",
+                    "maxLength": 28,
+                    "minLength": 1
+                },
+                "number": {
+                    "type": "integer"
+                },
+                "position": {
+                    "type": "string",
+                    "maxLength": 2,
+                    "minLength": 1
+                },
+                "team_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.Score": {
+            "type": "object",
+            "required": [
+                "game_id",
+                "player_id",
+                "points",
+                "quarter",
+                "time"
+            ],
+            "properties": {
+                "game_id": {
+                    "type": "integer"
+                },
+                "player_id": {
+                    "type": "integer"
+                },
+                "points": {
+                    "type": "integer",
+                    "maximum": 3,
+                    "minimum": 1
+                },
+                "quarter": {
+                    "type": "integer",
+                    "maximum": 6,
+                    "minimum": 1
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.ScoreToPublish": {
+            "type": "object",
+            "properties": {
+                "game": {
+                    "$ref": "#/definitions/dto.Game"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "opposing_team": {
+                    "$ref": "#/definitions/dto.Team"
+                },
+                "player_scored": {
+                    "$ref": "#/definitions/dto.Player"
+                },
+                "points": {
+                    "type": "integer"
+                },
+                "quarter": {
+                    "type": "integer"
+                },
+                "this_team": {
+                    "$ref": "#/definitions/dto.Team"
+                },
+                "time": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.Substitution": {
+            "type": "object",
+            "required": [
+                "game_id",
+                "quarter",
+                "time",
+                "to_player_id",
+                "whom_player_id"
+            ],
+            "properties": {
+                "game_id": {
+                    "type": "integer"
+                },
+                "quarter": {
+                    "type": "integer",
+                    "maximum": 6,
+                    "minimum": 1
+                },
+                "time": {
+                    "type": "string"
+                },
+                "to_player_id": {
+                    "type": "integer"
+                },
+                "whom_player_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dto.SubstitutionToPublish": {
+            "type": "object",
+            "properties": {
+                "game": {
+                    "$ref": "#/definitions/dto.Game"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "opposing_team": {
+                    "$ref": "#/definitions/dto.Team"
+                },
+                "quarter": {
+                    "type": "integer"
+                },
+                "this_team": {
+                    "$ref": "#/definitions/dto.Team"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "to_player": {
+                    "$ref": "#/definitions/dto.Player"
+                },
+                "whom_player": {
+                    "$ref": "#/definitions/dto.Player"
+                }
+            }
+        },
+        "dto.Team": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string",
+                    "maxLength": 16,
+                    "minLength": 1
+                }
+            }
+        },
+        "exceptions.Exception": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status_code": {
+                    "type": "integer"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "Api-Key",
+            "in": "header"
+        }
+    }
+}

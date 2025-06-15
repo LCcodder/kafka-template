@@ -22,6 +22,19 @@ func NewTeamsController(r *chi.Mux, tuc *teams_usecases.TeamsUseCases) *TeamsCon
 	}
 }
 
+// @BasePath /api/v1
+
+// Create a new team
+// @Description Create a new team, returns created team data
+// @Tags Teams
+// @Accept json
+// @Produce json
+// @Param team body dto.Team true "Team data"
+// @Success 201 {object} dto.Team
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/teams [post]
 func (c *TeamsController) createTeamHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 
@@ -45,6 +58,17 @@ func (c *TeamsController) createTeamHandler(w http.ResponseWriter, r *http.Reque
 	w.Write(*utils.ParseResponse(createdTeam))
 }
 
+// Get team by ID
+// @Description Get team by ID, returns team data
+// @Tags Teams
+// @Accept json
+// @Produce json
+// @Param id path int true "Team ID"
+// @Success 201 {object} dto.Team
+// @Failure 404 {object} exceptions.Exception
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/teams/{id} [get]
 func (c *TeamsController) getTeamById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 	id, _ := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -60,6 +84,15 @@ func (c *TeamsController) getTeamById(w http.ResponseWriter, r *http.Request) {
 	w.Write(*utils.ParseResponse(team))
 }
 
+// Get all teams
+// @Description Get all teams, returns list of teams
+// @Tags Teams
+// @Accept json
+// @Produce json
+// @Success 200 {array} dto.Team
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/teams [get]
 func (c *TeamsController) GetAllTeams(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 

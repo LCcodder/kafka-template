@@ -1,10 +1,11 @@
+import { P } from "pino";
 import { logger } from "../utils/etc/PinoLogger";
 import { IConfig } from "./IConfig";
 require('dotenv').config()
 
 export const CONFIG: IConfig = {
   botToken: process.env.BOT_TOKEN || "6605761193:AAGn6uzdsdmHnAJcaWi8mrskz0esrCCcbuo",
-  kafkaClustersConnections: ["localhost:29092"],
+  kafkaClustersConnections: [ process.env.KAFKA_CLUSTER || "localhost:29092"],
   dbName: process.env.DB_NAME || "basketball_aggregator",
   dbUser: process.env.DB_USER || "root",
   dbPassword: process.env.DB_PASSWORD || "robocopid12",

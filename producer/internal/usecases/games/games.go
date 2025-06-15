@@ -3,7 +3,7 @@ package games_usecases
 import (
 	"time"
 
-	"example.com/m/v2/internal/repositories"
+	"example.com/m/v2/internal/adapters/repositories"
 	"example.com/m/v2/internal/shared/dto"
 	"example.com/m/v2/internal/shared/exceptions"
 	teams_usecases "example.com/m/v2/internal/usecases/teams"

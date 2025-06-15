@@ -22,6 +22,21 @@ func NewEventsController(r *chi.Mux, euc *events_usecases.EventUseCases) *Events
 	}
 }
 
+// @BasePath /api/v1
+
+// Publish score event
+// @Description Publish a score event for a game, returns event data
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param id path int true "Game ID"
+// @Param score body dto.Score true "Score event data"
+// @Success 201 {object} dto.ScoreToPublish
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} exceptions.Exception
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/games/{id}/score [post]
 func (c *EventsController) publishScoreHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 
@@ -49,6 +64,19 @@ func (c *EventsController) publishScoreHandler(w http.ResponseWriter, r *http.Re
 	w.Write(*utils.ParseResponse(publishedScore))
 }
 
+// Publish foul event
+// @Description Publish a foul event for a game, returns event data
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param id path int true "Game ID"
+// @Param foul body dto.Foul true "Foul event data"
+// @Success 201 {object} dto.FoulToPublish
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} exceptions.Exception
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/games/{id}/fouls [post]
 func (c *EventsController) publishFoulHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 
@@ -76,6 +104,19 @@ func (c *EventsController) publishFoulHandler(w http.ResponseWriter, r *http.Req
 	w.Write(*utils.ParseResponse(publishedFoul))
 }
 
+// Publish substitution event
+// @Description Publish a substitution event for a game, returns event data
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Param id path int true "Game ID"
+// @Param substitution body dto.Substitution true "Substitution event data"
+// @Success 201 {object} dto.SubstitutionToPublish
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} exceptions.Exception
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/games/{id}/substitutions [post]
 func (c *EventsController) publishSubstitutionHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 

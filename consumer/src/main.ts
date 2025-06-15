@@ -53,6 +53,7 @@ const main = async () => {
   
   
   const controllers = controllersFactory(gamesService, teamsService)
+  
   bot.command('start', controllers.menu)
   bot.command('menu', controllers.menu)
   bot.command('subscribe', (ctx) => ctx.scene.enter(ACTIONS.SUBSCRIBE))

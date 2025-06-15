@@ -5,10 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"example.com/m/v2/internal/controllers"
+	_ "example.com/m/v2/docs" // Import the docs package to generate Swagger docs
+	"example.com/m/v2/internal/adapters/controllers"
+	"example.com/m/v2/internal/adapters/repositories"
 	"example.com/m/v2/internal/infra/db"
 	"example.com/m/v2/internal/infra/mq"
-	"example.com/m/v2/internal/repositories"
 	"example.com/m/v2/internal/shared/config"
 	"example.com/m/v2/internal/shared/middlewares"
 	events_usecases "example.com/m/v2/internal/usecases/events"
@@ -26,6 +27,10 @@ func loadEnv() {
 		log.Println("No .env file found")
 	}
 }
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Api-Key
 
 func main() {
 	loadEnv()
@@ -55,6 +60,7 @@ func diContainer(db *sql.DB, r *chi.Mux, p *sarama.SyncProducer) {
 	eventsUseCases := events_usecases.NewEventUseCases(p, playersUseCases, teamsUseCases, gamesUseCases)
 
 	r.Use(middlewares.Authenticate)
+	controllers.NewSwagController(r).Setup()
 	controllers.NewPlayersController(r, playersUseCases).Setup()
 	controllers.NewTeamsController(r, teamsUseCases).Setup()
 	controllers.NewEventsController(r, eventsUseCases).Setup()

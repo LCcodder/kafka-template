@@ -1,0 +1,630 @@
+definitions:
+  dto.Foul:
+    properties:
+      from_player_id:
+        type: integer
+      game_id:
+        type: integer
+      on_player_id:
+        type: integer
+      quarter:
+        maximum: 6
+        minimum: 1
+        type: integer
+      time:
+        type: string
+      type:
+        maxLength: 16
+        minLength: 1
+        type: string
+    required:
+    - from_player_id
+    - game_id
+    - on_player_id
+    - quarter
+    - time
+    - type
+    type: object
+  dto.FoulToPublish:
+    properties:
+      by_player:
+        $ref: '#/definitions/dto.Player'
+      game:
+        $ref: '#/definitions/dto.Game'
+      id:
+        type: string
+      on_player:
+        $ref: '#/definitions/dto.Player'
+      opposing_team:
+        $ref: '#/definitions/dto.Team'
+      quarter:
+        type: integer
+      this_team:
+        $ref: '#/definitions/dto.Team'
+      time:
+        type: string
+      type:
+        type: string
+    type: object
+  dto.Game:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      is_ended:
+        type: boolean
+      team_away_id:
+        type: integer
+      team_away_score:
+        type: integer
+      team_home_id:
+        type: integer
+      team_home_score:
+        type: integer
+      updated_at:
+        type: string
+    required:
+    - team_away_id
+    - team_home_id
+    type: object
+  dto.Player:
+    properties:
+      first_name:
+        maxLength: 16
+        minLength: 1
+        type: string
+      id:
+        type: integer
+      last_name:
+        maxLength: 28
+        minLength: 1
+        type: string
+      number:
+        type: integer
+      position:
+        maxLength: 2
+        minLength: 1
+        type: string
+      team_id:
+        type: integer
+    required:
+    - first_name
+    - last_name
+    - number
+    - position
+    - team_id
+    type: object
+  dto.Score:
+    properties:
+      game_id:
+        type: integer
+      player_id:
+        type: integer
+      points:
+        maximum: 3
+        minimum: 1
+        type: integer
+      quarter:
+        maximum: 6
+        minimum: 1
+        type: integer
+      time:
+        type: string
+    required:
+    - game_id
+    - player_id
+    - points
+    - quarter
+    - time
+    type: object
+  dto.ScoreToPublish:
+    properties:
+      game:
+        $ref: '#/definitions/dto.Game'
+      id:
+        type: string
+      opposing_team:
+        $ref: '#/definitions/dto.Team'
+      player_scored:
+        $ref: '#/definitions/dto.Player'
+      points:
+        type: integer
+      quarter:
+        type: integer
+      this_team:
+        $ref: '#/definitions/dto.Team'
+      time:
+        type: string
+    type: object
+  dto.Substitution:
+    properties:
+      game_id:
+        type: integer
+      quarter:
+        maximum: 6
+        minimum: 1
+        type: integer
+      time:
+        type: string
+      to_player_id:
+        type: integer
+      whom_player_id:
+        type: integer
+    required:
+    - game_id
+    - quarter
+    - time
+    - to_player_id
+    - whom_player_id
+    type: object
+  dto.SubstitutionToPublish:
+    properties:
+      game:
+        $ref: '#/definitions/dto.Game'
+      id:
+        type: string
+      opposing_team:
+        $ref: '#/definitions/dto.Team'
+      quarter:
+        type: integer
+      this_team:
+        $ref: '#/definitions/dto.Team'
+      time:
+        type: string
+      to_player:
+        $ref: '#/definitions/dto.Player'
+      whom_player:
+        $ref: '#/definitions/dto.Player'
+    type: object
+  dto.Team:
+    properties:
+      id:
+        type: integer
+      name:
+        maxLength: 16
+        minLength: 1
+        type: string
+    required:
+    - name
+    type: object
+  exceptions.Exception:
+    properties:
+      message:
+        type: string
+      status_code:
+        type: integer
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/games:
+    get:
+      consumes:
+      - application/json
+      description: Get all games, returns list of games
+      parameters:
+      - description: Filter by ended games (true/false)
+        in: query
+        name: is_ended
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.Game'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Games
+    post:
+      consumes:
+      - application/json
+      description: Create a new game, returns created game data
+      parameters:
+      - description: Game data
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Game'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Game'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Games
+  /api/v1/games/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get game by ID, returns game data
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Game'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Games
+  /api/v1/games/{id}/close:
+    patch:
+      consumes:
+      - application/json
+      description: Get game by ID, returns game data
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Game'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Games
+  /api/v1/games/{id}/fouls:
+    post:
+      consumes:
+      - application/json
+      description: Publish a foul event for a game, returns event data
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Foul event data
+        in: body
+        name: foul
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Foul'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.FoulToPublish'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Events
+  /api/v1/games/{id}/score:
+    post:
+      consumes:
+      - application/json
+      description: Publish a score event for a game, returns event data
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Score event data
+        in: body
+        name: score
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Score'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.ScoreToPublish'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Events
+  /api/v1/games/{id}/substitutions:
+    post:
+      consumes:
+      - application/json
+      description: Publish a substitution event for a game, returns event data
+      parameters:
+      - description: Game ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Substitution event data
+        in: body
+        name: substitution
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Substitution'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.SubstitutionToPublish'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Events
+  /api/v1/players:
+    post:
+      consumes:
+      - application/json
+      description: Create a new player, returns created player data
+      parameters:
+      - description: Player data
+        in: body
+        name: player
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Player'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Player'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Players
+  /api/v1/players/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get player by ID, returns player data
+      parameters:
+      - description: Player ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Player'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Players
+  /api/v1/teams:
+    get:
+      consumes:
+      - application/json
+      description: Get all teams, returns list of teams
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.Team'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Teams
+    post:
+      consumes:
+      - application/json
+      description: Create a new team, returns created team data
+      parameters:
+      - description: Team data
+        in: body
+        name: team
+        required: true
+        schema:
+          $ref: '#/definitions/dto.Team'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Team'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Teams
+  /api/v1/teams/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Get team by ID, returns team data
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/dto.Team'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Teams
+  /api/v1/teams/{id}/players:
+    get:
+      consumes:
+      - application/json
+      description: Get players by team ID, returns list of players
+      parameters:
+      - description: Team ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.Player'
+            type: array
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/exceptions.Exception'
+      security:
+      - ApiKeyAuth: []
+      tags:
+      - Players
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Api-Key
+    type: apiKey
+swagger: "2.0"

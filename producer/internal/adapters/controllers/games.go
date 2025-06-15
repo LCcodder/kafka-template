@@ -22,6 +22,19 @@ func NewGamesController(r *chi.Mux, guc *games_usecases.GamesUseCases) *GamesCon
 	}
 }
 
+// @BasePath /api/v1
+
+// Create a new game
+// @Description Create a new game, returns created game data
+// @Tags Games
+// @Accept json
+// @Produce json
+// @Param game body dto.Game true "Game data"
+// @Success 201 {object} dto.Game
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/games [post]
 func (c *GamesController) createGameHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 
@@ -45,6 +58,17 @@ func (c *GamesController) createGameHandler(w http.ResponseWriter, r *http.Reque
 	w.Write(*utils.ParseResponse(createdTeam))
 }
 
+// Get game by ID
+// @Description Get game by ID, returns game data
+// @Tags Games
+// @Accept json
+// @Produce json
+// @Param id path int true "Game ID"
+// @Success 201 {object} dto.Game
+// @Failure 404 {object} exceptions.Exception
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/games/{id} [get]
 func (c *GamesController) getGameById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 
@@ -61,6 +85,17 @@ func (c *GamesController) getGameById(w http.ResponseWriter, r *http.Request) {
 	w.Write(*utils.ParseResponse(game))
 }
 
+// Get game by ID
+// @Description Get game by ID, returns game data
+// @Tags Games
+// @Accept json
+// @Produce json
+// @Param id path int true "Game ID"
+// @Success 201 {object} dto.Game
+// @Failure 404 {object} exceptions.Exception
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/games/{id}/close [patch]
 func (c *GamesController) closeGameHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 
@@ -79,6 +114,16 @@ func (c *GamesController) closeGameHandler(w http.ResponseWriter, r *http.Reques
 	}))
 }
 
+// Get all games
+// @Description Get all games, returns list of games
+// @Tags Games
+// @Accept json
+// @Produce json
+// @Param is_ended query bool false "Filter by ended games (true/false)"
+// @Success 200 {array} dto.Game
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/games [get]
 func (c *GamesController) getGamesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 

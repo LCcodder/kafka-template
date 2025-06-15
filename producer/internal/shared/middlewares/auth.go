@@ -10,6 +10,12 @@ import (
 
 func Authenticate(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		if isWhitelisted(r.URL.Path) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		w.Header().Set("content-Type", "application/json")
 		h := r.Header["Api-Key"]
 

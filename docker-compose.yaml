@@ -12,17 +12,17 @@ services:
     ports:
       - 22181:2181
   
-  bot:
-    build: ./consumer
-    restart: always
-    depends_on:
-      - zookeeper
-      - kafka
-      - api
-    networks:
-      - app
-    environment:
-      - name=value
+  # bot:
+  #   build: ./consumer
+  #   restart: always
+  #   depends_on:
+  #     - zookeeper
+  #     - kafka
+  #     - api
+  #   networks:
+  #     - app
+  #   environment:
+  #     - name=value
   
   kafka:
     image: confluentinc/cp-kafka:latest

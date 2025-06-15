@@ -22,6 +22,19 @@ func NewPlayersController(r *chi.Mux, puc *players_usecases.PlayersUseCases) *Pl
 	}
 }
 
+// @BasePath /api/v1
+
+// Create a new player
+// @Description Create a new player, returns created player data
+// @Tags Players
+// @Accept json
+// @Produce json
+// @Param player body dto.Player true "Player data"
+// @Success 201 {object} dto.Player
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/players [post]
 func (c *PlayersController) createPlayerHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 
@@ -45,6 +58,17 @@ func (c *PlayersController) createPlayerHandler(w http.ResponseWriter, r *http.R
 	w.Write(*utils.ParseResponse(createdPlayer))
 }
 
+// Get player by ID
+// @Description Get player by ID, returns player data
+// @Tags Players
+// @Accept json
+// @Produce json
+// @Param id path int true "Player ID"
+// @Success 201 {object} dto.Player
+// @Failure 404 {object} exceptions.Exception
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/players/{id} [get]
 func (c *PlayersController) getPlayerById(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 	id, _ := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
@@ -60,6 +84,17 @@ func (c *PlayersController) getPlayerById(w http.ResponseWriter, r *http.Request
 	w.Write(*utils.ParseResponse(player))
 }
 
+// Get players by team ID
+// @Description Get players by team ID, returns list of players
+// @Tags Players
+// @Accept json
+// @Produce json
+// @Param id path int true "Team ID"
+// @Success 200 {array} dto.Player
+// @Failure 404 {object} exceptions.Exception
+// @Failure 500 {object} exceptions.Exception
+// @Security ApiKeyAuth
+// @Router /api/v1/teams/{id}/players [get]
 func (c *PlayersController) getTeamPlayersHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-Type", "application/json")
 	id, _ := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)

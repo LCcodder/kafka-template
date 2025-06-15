@@ -1,7 +1,7 @@
 package teams_usecases
 
 import (
-	"example.com/m/v2/internal/repositories"
+	"example.com/m/v2/internal/adapters/repositories"
 	"example.com/m/v2/internal/shared/dto"
 	"example.com/m/v2/internal/shared/exceptions"
 )
