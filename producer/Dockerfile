@@ -1,13 +1,22 @@
-FROM golang:1.23.6-alpine
+# === Этап 1: Сборка бинарника ===
+FROM golang:1.23.6-alpine AS builder
 
-WORKDIR /app
+WORKDIR /build
 
-# Copy Go module files and download dependencies
+# Скачиваем зависимости (кешируется докером)
 COPY go.mod go.sum ./
 RUN go mod download
 
-# Copy the rest of your app
+# Копируем код
 COPY . .
 
-# Run your app with `go run cmd/main.go`
-CMD ["go", "run", "cmd/main.go"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o /app/main ./cmd/main.go
+
+# === Этап 2: Финальный минимальный образ ===
+FROM alpine:3.19
+
+WORKDIR /app
+
+COPY --from=builder /app/main .
+
+CMD ["./main"]
